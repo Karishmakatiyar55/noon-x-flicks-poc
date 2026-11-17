@@ -506,7 +506,7 @@ document.addEventListener("keydown", e=>{ if(e.key === "Escape"){ toggleGuide(fa
   b.addEventListener("pointermove", e=>{ if(sx==null) return; const dx=e.clientX-sx, dy=e.clientY-sy; if(!moved && Math.hypot(dx,dy)<8) return; moved=true;
     b.style.left=Math.max(6,Math.min(innerWidth-b.offsetWidth-6,ox+dx))+"px"; b.style.top=Math.max(6,Math.min(innerHeight-b.offsetHeight-6,oy+dy))+"px"; b.style.right="auto"; b.style.bottom="auto"; });
   b.addEventListener("pointerup", ()=>{ if(sx==null) return; sx=null; if(!moved) toggleGuide(); });
-  setTimeout(()=>b.classList.add("hl"), 3500);
+  setTimeout(()=>b.classList.add("hl"), 1500);   // blinks until the list has been opened once
 })();
 
 /* ================= phone scaling ================= */

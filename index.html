@@ -415,16 +415,20 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:ra
 @media (max-width:860px){
   body{background:#fff}body::before{display:none}
   .fhdr{display:none}.page{padding-top:0}
-  .side{font-family:var(--font);background:#fff;max-height:70vh;width:auto}
-  .side .kick{color:#6a5cff;letter-spacing:.14em;font-weight:800;font-size:11.5px}
-  .side h1{font-size:19px;font-weight:800;letter-spacing:-.4px;line-height:1.12;margin:8px 0 8px;background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#1c1e26}
-  .glist{border:0;background:none;padding:0;scrollbar-color:auto}
-  .glist h6{display:flex;color:#1c1e26;background:#f3f4f8;border:0;font-weight:800;font-size:11px;letter-spacing:.08em;margin:12px 0 4px;padding:8px 10px;border-radius:10px}
-  .glist h6 i{display:block;width:9px;height:9px}
-  .gitem{color:#1c1e26;font-size:13px;border-radius:9px}
-  .gitem:hover{background:#f3f4f8}
-  .gitem.cur{background:#eeecff;color:#3a2fd0;font-weight:700}
-  .gitem .n{color:#9aa0b0}
+  .side{font-family:var(--f-font);background:#1A1210;border:1px solid rgba(242,196,179,.28);max-height:70vh;width:auto;box-shadow:0 24px 70px -10px rgba(0,0,0,.7)}
+  .side h1{font-size:22px}
+  .glist{border:0;background:none;padding:0}
+  .glist h6{color:#1A1210;background:linear-gradient(95deg,#F8E9E1 0%,#F2C4B3 70%,#E39C86 100%);border:0;font-size:11.5px;font-weight:700;letter-spacing:.1em;margin:14px 0 6px;padding:8px 12px;border-radius:10px}
+  .gitem{color:#F6E3DA;font-size:14px;min-height:38px}
+  .gitem.cur{background:rgba(242,196,179,.16);color:#F2C4B3}
+  .gitem .n{color:#8E7F78}
+  .gpill{font-family:var(--f-font);background:linear-gradient(#FBEFE9 0%,#F2C4B3 70%,#D9937C 100%);color:#1A1210;font-weight:700;box-shadow:0 10px 26px -8px rgba(0,0,0,.65),0 0 0 1px rgba(26,18,16,.25)}
+  .gpill i{background:#1A1210;color:#F2C4B3}
+  .gpill::after{content:"";position:absolute;inset:-3px;border-radius:999px;border:2px solid #F2C4B3;opacity:0;pointer-events:none}
+  .gpill.hl{animation:blinkf 1.5s ease-in-out infinite}
+  .gpill.hl::after{animation:ringf 1.5s ease-out infinite}
+  @keyframes blinkf{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.06);filter:brightness(1.12)}}
+  @keyframes ringf{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.35,1.7)}}
 }
 
 .vidf{flex:none;width:226px;border-radius:14px;overflow:hidden;position:relative;background:#1c1e26;color:#fff;scroll-snap-align:start}
@@ -1135,7 +1139,7 @@ document.addEventListener("keydown", e=>{ if(e.key === "Escape"){ toggleGuide(fa
   b.addEventListener("pointermove", e=>{ if(sx==null) return; const dx=e.clientX-sx, dy=e.clientY-sy; if(!moved && Math.hypot(dx,dy)<8) return; moved=true;
     b.style.left=Math.max(6,Math.min(innerWidth-b.offsetWidth-6,ox+dx))+"px"; b.style.top=Math.max(6,Math.min(innerHeight-b.offsetHeight-6,oy+dy))+"px"; b.style.right="auto"; b.style.bottom="auto"; });
   b.addEventListener("pointerup", ()=>{ if(sx==null) return; sx=null; if(!moved) toggleGuide(); });
-  setTimeout(()=>b.classList.add("hl"), 3500);
+  setTimeout(()=>b.classList.add("hl"), 1500);   // blinks until the list has been opened once
 })();
 
 /* ================= phone scaling ================= */
