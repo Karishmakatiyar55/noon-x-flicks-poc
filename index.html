@@ -514,7 +514,7 @@ const BRANDS = {
   pata:{ name:"Patagonia", av:"P", avc:"#2d3a4a", src:T1+"6a91088b3252dba34b486df1_q18dy8/ad.js", unit:"Colour", named:true, retail:true, tag:"ex",
     head:"Made for the moment", prod:"Patagonia Men's Jacket,", r:4.7, rc:"210", desc:"A trail-ready jacket built to last. Pick a colour and see it outdoors before you buy.",
     variants:[{n:"Green",c:"#6f8a5b",p:899,was:1049},{n:"Brown",c:"#7a5338",p:899,was:1049},{n:"Teal",c:"#2b7f86",p:899,was:1049}] },
-  zara:{ name:"Zara", av:"ZARA", avc:"#000", src:T1+"zara/ad.js", keepCta:true, light:true, unit:"Style", named:true, retail:true, tall:true, tag:"ex",
+  zara:{ name:"Zara", av:"ZARA", avc:"#000", src:T1+"zara/ad.js", light:true, unit:"Style", named:true, retail:true, tall:true, tag:"ex",
     head:"Bomber season", prod:"Zara", r:4.4, rc:"180", desc:"Three bomber jackets, one look. Switch jackets inside the video.",
     variants:[{n:"Checked bomber jacket",c:"#8a8f7a",p:399,was:459},{n:"Plaid bomber jacket",c:"#5a4a3c",p:399,was:459},{n:"Polka dot bomber jacket",c:"#23252b",p:379,was:459}] },
   mms:{ name:"M&M's", av:"m&m", avc:"#6b3f1d", src:T1+"6a8e82a03252dba34b484fa9_xvaz4d/ad.js", unit:"Pick", named:false,
@@ -716,8 +716,14 @@ if(!r.querySelector(".vx-swatch,.vx-picker,[data-vertex-diff]"))continue;
 var st=document.createElement("style");st.setAttribute("data-nocta","");
 st.textContent="[data-vertex-trigger]:not(.vx-swatch):not(.vx-picker):not([data-vertex-diff]):not(.vx-picker *):not(:has(.vx-swatch,.vx-picker,[data-vertex-diff])){visibility:hidden!important;opacity:0!important;pointer-events:none!important}";
 r.appendChild(st)}}catch(e){}}
+/* Second pass, for players built differently: hide only what reads as a call-to-action button (short action text, no picture inside). Options are never matched. */
+var CTA_RE=/^(shop|order|buy|book|learn more|explore|view|get |add to|discover|see more|find |visit|try |rent)/i;
+function noctaText(){if(KEEP)return;try{var ps=document.getElementsByTagName("vertex-player");for(var i=0;i<ps.length;i++){var r=ps[i].shadowRoot;if(!r)continue;var els=r.querySelectorAll("button,a,[role=button],[data-vertex-trigger]");for(var j=0;j<els.length;j++){var el=els[j];if(el.__fh)continue;
+if(el.matches(".vx-swatch,.vx-picker,[data-vertex-diff]")||el.closest(".vx-picker,[data-vertex-diff]")||el.querySelector("img,video,canvas,picture,.vx-swatch,.vx-picker,[data-vertex-diff]"))continue;
+var tx=(el.textContent||"").replace(/\s+/g," ").trim();if(tx.length<3||tx.length>26||!CTA_RE.test(tx))continue;
+el.__fh=1;el.style.setProperty("visibility","hidden","important");el.style.setProperty("pointer-events","none","important")}}}catch(e){}}
 new MutationObserver(function(){var v=document.querySelector("vertex-player");if(v){hook(v);nocta()}}).observe(document.documentElement,{childList:true,subtree:true});
-var until=Date.now()+6e4;(function again(){nocta();if(Date.now()<until)setTimeout(again,200)})();
+var until=Date.now()+6e4;(function again(){nocta();noctaText();setTimeout(again,Date.now()<until?200:1200)})();
 window.addEventListener("error",function(e){var s=e.target;if(s&&s.tagName==="SCRIPT")t({type:"error",msg:"The Flick tag could not be loaded"})},true);
 t({type:"boot"});})();`;
   const cfg = !b.dsp ? "" : b.dsp === "house"

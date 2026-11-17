@@ -80,8 +80,14 @@ if(!r.querySelector(".vx-swatch,.vx-picker,[data-vertex-diff]"))continue;
 var st=document.createElement("style");st.setAttribute("data-nocta","");
 st.textContent="[data-vertex-trigger]:not(.vx-swatch):not(.vx-picker):not([data-vertex-diff]):not(.vx-picker *):not(:has(.vx-swatch,.vx-picker,[data-vertex-diff])){visibility:hidden!important;opacity:0!important;pointer-events:none!important}";
 r.appendChild(st)}}catch(e){}}
+/* Second pass, for players built differently: hide only what reads as a call-to-action button (short action text, no picture inside). Options are never matched. */
+var CTA_RE=/^(shop|order|buy|book|learn more|explore|view|get |add to|discover|see more|find |visit|try |rent)/i;
+function noctaText(){if(KEEP)return;try{var ps=document.getElementsByTagName("vertex-player");for(var i=0;i<ps.length;i++){var r=ps[i].shadowRoot;if(!r)continue;var els=r.querySelectorAll("button,a,[role=button],[data-vertex-trigger]");for(var j=0;j<els.length;j++){var el=els[j];if(el.__fh)continue;
+if(el.matches(".vx-swatch,.vx-picker,[data-vertex-diff]")||el.closest(".vx-picker,[data-vertex-diff]")||el.querySelector("img,video,canvas,picture,.vx-swatch,.vx-picker,[data-vertex-diff]"))continue;
+var tx=(el.textContent||"").replace(/\s+/g," ").trim();if(tx.length<3||tx.length>26||!CTA_RE.test(tx))continue;
+el.__fh=1;el.style.setProperty("visibility","hidden","important");el.style.setProperty("pointer-events","none","important")}}}catch(e){}}
 new MutationObserver(function(){var v=document.querySelector("vertex-player");if(v){hook(v);nocta()}}).observe(document.documentElement,{childList:true,subtree:true});
-var until=Date.now()+6e4;(function again(){nocta();if(Date.now()<until)setTimeout(again,200)})();
+var until=Date.now()+6e4;(function again(){nocta();noctaText();setTimeout(again,Date.now()<until?200:1200)})();
 window.addEventListener("error",function(e){var s=e.target;if(s&&s.tagName==="SCRIPT")t({type:"error",msg:"The Flick tag could not be loaded"})},true);
 t({type:"boot"});})();`;
   const cfg = !b.dsp ? "" : b.dsp === "house"
