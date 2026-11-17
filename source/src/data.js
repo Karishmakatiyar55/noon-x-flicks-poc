@@ -48,7 +48,7 @@ const BRANDS = {
   pata:{ name:"Patagonia", av:"P", avc:"#2d3a4a", src:T1+"6a91088b3252dba34b486df1_q18dy8/ad.js", unit:"Colour", named:true, retail:true, tag:"ex",
     head:"Made for the moment", prod:"Patagonia Men's Jacket,", r:4.7, rc:"210", desc:"A trail-ready jacket built to last. Pick a colour and see it outdoors before you buy.",
     variants:[{n:"Green",c:"#6f8a5b",p:899,was:1049},{n:"Brown",c:"#7a5338",p:899,was:1049},{n:"Teal",c:"#2b7f86",p:899,was:1049}] },
-  zara:{ name:"Zara", av:"ZARA", avc:"#000", src:T1+"zara/ad.js", unit:"Style", named:true, retail:true, tall:true, tag:"ex",
+  zara:{ name:"Zara", av:"ZARA", avc:"#000", src:T1+"zara/ad.js", keepCta:true, light:true, unit:"Style", named:true, retail:true, tall:true, tag:"ex",
     head:"Bomber season", prod:"Zara", r:4.4, rc:"180", desc:"Three bomber jackets, one look. Switch jackets inside the video.",
     variants:[{n:"Checked bomber jacket",c:"#8a8f7a",p:399,was:459},{n:"Plaid bomber jacket",c:"#5a4a3c",p:399,was:459},{n:"Polka dot bomber jacket",c:"#23252b",p:379,was:459}] },
   mms:{ name:"M&M's", av:"m&m", avc:"#6b3f1d", src:T1+"6a8e82a03252dba34b484fa9_xvaz4d/ad.js", unit:"Pick", named:false,

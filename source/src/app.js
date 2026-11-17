@@ -47,7 +47,7 @@ function tagDoc(slotId, b){
   // The bridge runs before the tag. It reports render status, option switches and click-throughs
   // to this page, and gives the page a mute switch so sound can never keep playing off screen.
   const bridge = `(function(){var av=function(s){return /av01|av1/i.test(String(s||''))};try{if(window.VideoDecoder&&VideoDecoder.isConfigSupported){var o=VideoDecoder.isConfigSupported.bind(VideoDecoder);VideoDecoder.isConfigSupported=function(q){return q&&av(q.codec)?Promise.resolve({supported:false,config:q}):o(q)}}}catch(e){}try{var mc=navigator.mediaCapabilities;if(mc&&mc.decodingInfo){var od=mc.decodingInfo.bind(mc);mc.decodingInfo=function(q){return q&&q.video&&av(q.video.contentType)?Promise.resolve({supported:false,smooth:false,powerEfficient:false}):od(q)}}}catch(e){}})();
-(function(){var S=${JSON.stringify(slotId)};function t(m){m.flam=1;m.slot=S;try{parent.postMessage(m,"*")}catch(e){}}
+(function(){var S=${JSON.stringify(slotId)},KEEP=${b.keepCta?1:0};function t(m){m.flam=1;m.slot=S;try{parent.postMessage(m,"*")}catch(e){}}
 /* ---- sound guard: starts silenced; the host page un-silences only the Flick that is on screen ---- */
 var M=true,E=[],G=[];
 function reg(el){if(E.indexOf(el)<0){E.push(el);el.addEventListener("volumechange",function(){if(M&&!el.muted){el.__fm=1;el.muted=true}})}}
@@ -73,7 +73,11 @@ v.addEventListener("vertex-error",function(e){var d=e.detail||{};if(d.recovered|
 v.addEventListener("vertex-cta",function(e){var d=e.detail||{};t({type:"cta",url:d.url||""})});
 v.addEventListener("vertex-diff-change",function(e){var d=e.detail||{};var x=d.diff!=null?d.diff:(d.diffId!=null?d.diffId:d.diff_id);t({type:"switch",diff:+x||0,initial:!!d.initial})});}
 /* the host app shows its own button, so the Flick's own CTA is hidden; the option switcher and sound button stay */
-function nocta(){try{var ps=document.getElementsByTagName("vertex-player");for(var i=0;i<ps.length;i++){var r=ps[i].shadowRoot;if(r&&!r.querySelector("style[data-nocta]")){var st=document.createElement("style");st.setAttribute("data-nocta","");st.textContent="[data-vertex-trigger]{visibility:hidden!important;opacity:0!important;pointer-events:none!important}";r.appendChild(st)}}}catch(e){}}
+function nocta(){if(KEEP)return;try{var ps=document.getElementsByTagName("vertex-player");for(var i=0;i<ps.length;i++){var r=ps[i].shadowRoot;if(!r)continue;var els=r.querySelectorAll("[data-vertex-trigger]");for(var j=0;j<els.length;j++){var el=els[j];if(el.__fh)continue;
+var v=(el.getAttribute("data-vertex-trigger")||"")+" "+(el.getAttribute("class")||"")+" "+(el.id||"");if(/diff|variant|swap|swatch|picker|scene|option|thumb|sound|mute|audio/i.test(v))continue;
+if(el.hasAttribute("data-vertex-diff")||(el.closest&&el.closest(".vx-picker,[data-vertex-diff]"))||el.querySelector("[data-vertex-diff],.vx-swatch,.vx-picker,[data-vertex-trigger]"))continue;
+var sib=0,p=el.parentNode,ch=p&&p.children?p.children:[];for(var k=0;k<ch.length;k++){if(ch[k].hasAttribute&&ch[k].hasAttribute("data-vertex-trigger"))sib++}if(sib>1)continue;
+el.__fh=1;el.style.setProperty("visibility","hidden","important");el.style.setProperty("pointer-events","none","important")}}}catch(e){}}
 new MutationObserver(function(){var v=document.querySelector("vertex-player");if(v){hook(v);nocta()}}).observe(document.documentElement,{childList:true,subtree:true});
 var until=Date.now()+6e4;(function again(){nocta();if(Date.now()<until)setTimeout(again,200)})();
 window.addEventListener("error",function(e){var s=e.target;if(s&&s.tagName==="SCRIPT")t({type:"error",msg:"The Flick tag could not be loaded"})},true);
@@ -86,7 +90,7 @@ t({type:"boot"});})();`;
   return `<!doctype html>
 <meta charset=utf-8>
 <meta name=ad.orientation content=portrait,landscape>
-<style>html,body{margin:0;height:100%;background:${b.transparent?"transparent":b.dark?"#141518":"#eceef3"};overflow:hidden}</style>
+<style>html,body{margin:0;height:100%;background:${b.transparent?"transparent":b.dark?"#141518":b.light?"#fff":"#eceef3"};overflow:hidden}</style>
 <script>${bridge}<\/script>
 <script>var ExitApi=window.ExitApi||{exit:function(){}},clickTag="\${CLICK_URL_UNESC}";<\/script>
 ${cfg}
@@ -284,7 +288,7 @@ function foodScreen(){
   return `<div class="screen t-food">${hdr("food", locRow()+`<button class="sbox" onclick="out('Restaurant search')">${I.search}<span>Search restaurants</span></button>`)}<div class="scr" id="scr">
   ${slice("s_fdeals","out('This deal')")}${slice("s_fcui","out('Cuisine pages')")}${slice("s_foffers","out('This restaurant')")}
   ${sec("In the spotlight", `<div class="row" style="align-items:flex-start">${adCard("spot","lc","spot",{style:"width:262px",cta:"rest",label:"Order now",ccls:"acc",head:"Little Caesars · Pizza · 25-35 mins"})}
-    ${spotI(["r_spot1","ALBAIK - Dubai Mall","4.5","35-45 mins"])}${adCard("spot2","bk","spot2",{style:"width:262px",cta:"rest",label:"Order now",ccls:"acc",head:"Burger King · Burgers · 20-30 mins"})}${spotI(["r_spot2","Taqado Mexican Kitchen","4.6","25-35 mins"])}</div>`)}
+    ${adCard("spot2","bk","spot2",{style:"width:262px",cta:"rest",label:"Order now",ccls:"acc",head:"Burger King · Burgers · 20-30 mins"})}${spotI(["r_spot1","ALBAIK - Dubai Mall","4.5","35-45 mins"])}${spotI(["r_spot2","Taqado Mexican Kitchen","4.6","25-35 mins"])}</div>`)}
   ${slice("s_frush","toast('Alerts are not part of this demo')")}
   ${sec("Watch featured videos", `<div class="row">
     <button class="vid" data-anchor="vid" style="background:linear-gradient(170deg,#3a1206,#d62300)" onclick="openViewer('bk',{cta:'rest',label:'Order now'})" aria-label="Burger King featured video"><span class="adtag">Ad</span><span class="off">Interactive video</span><span class="play">${I.play}</span><b>Burger King</b><span>4.4 ★ · 20-30 mins</span></button>
@@ -300,7 +304,7 @@ function minutesScreen(){
     <div style="margin:10px 0 -10px">${slice("s_mchips","out('Other Minutes departments')")}</div>`)}<div class="scr" id="scr">
   ${slice("s_mwelcome","toast('Offer codes are not active in this demo')")}${bimg("b_gta")}
   <div class="row" style="padding-top:8px">${tile("wat")}${adTile("mrow","gm","mrow")}${tile("mlk")}${tile("brd")}</div>
-  <div class="hero" style="padding-top:12px;align-items:flex-start">${adCard("mban","gm","mban",{cls:"hcard",style:"width:300px;height:auto",label:"Order Now",ccls:"acc"})}${icard("h_gatorade",300)}${adCard("mban2","dor","mban2",{cls:"hcard",style:"width:300px;height:auto",label:"Order Now",ccls:"acc"})}${icard("h_pasta",300)}${adCard("mban3","bj","mban3",{cls:"hcard",style:"width:300px;height:auto",label:"Order Now",ccls:"acc"})}${icard("h_tummies",300)}</div>
+  <div class="hero" style="padding-top:12px;align-items:flex-start">${adCard("mban","bj","mban",{cls:"hcard",style:"width:300px;height:auto",label:"Order Now",ccls:"acc"})}${adCard("mban2","dor","mban2",{cls:"hcard",style:"width:300px;height:auto",label:"Order Now",ccls:"acc"})}${icard("h_gatorade",300)}${adCard("mban3","gm","mban3",{cls:"hcard",style:"width:300px;height:auto",label:"Order Now",ccls:"acc"})}${icard("h_pasta",300)}${icard("h_tummies",300)}</div>
   ${slice("s_mcat","out('Minutes categories')")}
   ${slice("s_moffers","toast('Offer codes are not active in this demo')")}
   ${sec("Fruits & Vegetables", row(["org","cuc","pine"]), "out('Fruits & Vegetables')", "Delivered in 15 mins!")}
