@@ -38,6 +38,7 @@ svg{display:block}input{font:inherit;color:inherit}
 .phone{position:absolute;left:0;top:0;width:414px;height:868px;padding:12px;border-radius:58px;background:#0f1114;box-shadow:0 0 0 2px #2a2d33 inset,0 40px 80px -30px rgba(30,34,60,.5),0 18px 36px -18px rgba(0,0,0,.35);transform-origin:0 0}
 .phone::after{content:"";position:absolute;top:24px;left:50%;width:118px;height:33px;margin-left:-59px;border-radius:20px;background:#000;z-index:80;pointer-events:none}
 .gpill{display:none}
+.sx{display:none}
 .gscrim{display:none}
 
 /* ============ app shell ============ */
@@ -416,7 +417,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:ra
   body{background:#fff}body::before{display:none}
   .fhdr{display:none}.page{padding-top:0}
   .side{font-family:var(--f-font);background:#1A1210;border:1px solid rgba(242,196,179,.28);max-height:70vh;width:auto;box-shadow:0 24px 70px -10px rgba(0,0,0,.7)}
-  .side h1{font-size:22px}
+  .sx{display:grid;place-items:center;position:absolute;right:12px;top:12px;width:34px;height:34px;border-radius:50%;background:rgba(242,196,179,.14);border:1px solid rgba(242,196,179,.3);color:#F6E3DA;z-index:2}
+  .side h1{font-size:22px;padding-right:40px}
   .glist{border:0;background:none;padding:0}
   .glist h6{color:#1A1210;background:linear-gradient(95deg,#F8E9E1 0%,#F2C4B3 70%,#E39C86 100%);border:0;font-size:11.5px;font-weight:700;letter-spacing:.1em;margin:14px 0 6px;padding:8px 12px;border-radius:10px}
   .gitem{color:#F6E3DA;font-size:14px;min-height:38px}
@@ -442,6 +444,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:ra
 <header class="fhdr"><div class="lock"><img id="flamLogo" alt="Flam AI"><span class="dv"></span><img id="noonLogo" alt="noon"></div></header>
 <div class="page">
   <aside class="side" id="side" aria-label="Flick placements">
+    <button class="sx" onclick="toggleGuide(false)" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <span class="kick">Flam × noon</span>
     <h1>Flicks inside the noon app.</h1>
     <p>Interactive video ads placed in noon, supermall, noon Food, noon Minutes and NowNow. Tap an option inside any video and the product, price and button around it follow.</p>
