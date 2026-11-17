@@ -375,3 +375,41 @@ svg{display:block}input{font:inherit;color:inherit}
 .wq{position:relative;width:96px;height:36px;flex:none}.wq .addc{right:0;bottom:3px}
 .wbar{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0;padding:14px 18px 24px;background:#1c1e26;color:#fff;font-size:14px;width:100%}
 .wbar b{color:var(--yellow)}.wbar span b{color:#fff}
+
+/* ================= Flam house style for the page around the phone ================= */
+:root{--f-bg:#110D0C;--f-card:#1A1210;--f-text:#F6E3DA;--f-acc:#F2C4B3;--f-2:#CDBFB8;--f-mute:#8E7F78;--f-dim:#6F625C;--f-font:'Figtree',system-ui,sans-serif}
+body{background:var(--f-bg)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(52% 60% at 88% 8%,rgba(227,156,134,.20),transparent 70%),radial-gradient(40% 45% at 4% 96%,rgba(217,147,124,.12),transparent 70%)}
+.fhdr{position:fixed;left:0;right:0;top:0;height:52px;z-index:150;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-family:var(--f-font);border-bottom:1px solid rgba(242,196,179,.14);background:rgba(17,13,12,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.fhdr .lock{display:flex;align-items:center;gap:13px}
+.fhdr #flamLogo{height:24px;width:auto;display:block}
+.fhdr .dv{width:1px;height:20px;background:rgba(246,227,218,.3)}
+.fhdr #noonLogo{height:22px;width:auto;display:block;border-radius:7px}
+.fhdr .rt{font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--f-mute)}
+.page{padding-top:62px;position:relative}
+.side{font-family:var(--f-font);width:340px;max-height:calc(100vh - 100px)}
+.side .kick{color:var(--f-mute);font-weight:600;letter-spacing:.18em;font-size:11px}
+.side h1{font-weight:500;font-size:34px;line-height:1.08;letter-spacing:-.8px;margin:10px 0 10px;background:linear-gradient(95deg,#F8E9E1 0%,#F2C4B3 60%,#E39C86 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.side p{color:var(--f-2);font-size:14px}
+.side .disc{color:var(--f-dim)}
+.glist{background:rgba(242,196,179,.045);border:1px solid rgba(242,196,179,.18);border-radius:20px;box-shadow:none;padding:8px;scrollbar-color:rgba(242,196,179,.3) transparent}
+.glist h6{color:var(--f-mute);font-weight:600;letter-spacing:.16em;margin:12px 10px 4px}
+.glist h6 i{display:none}
+.gitem{color:var(--f-text);font-size:13.5px;border-radius:12px}
+.gitem:hover{background:rgba(242,196,179,.08)}
+.gitem.cur{background:rgba(242,196,179,.14);color:var(--f-acc);font-weight:600}
+.gitem .n{color:var(--f-dim)}
+.phone{background:var(--f-card);box-shadow:0 0 0 1.5px rgba(242,196,179,.38) inset,0 0 0 1px rgba(242,196,179,.12),0 50px 130px -40px rgba(227,156,134,.45)}
+.pulse{animation-name:pulsef}
+@keyframes pulsef{10%{outline-color:#E39C86}70%{outline-color:#E39C86}100%{outline-color:rgba(227,156,134,0)}}
+@media (max-width:860px){
+  body{background:#fff}body::before{display:none}
+  .fhdr{display:none}.page{padding-top:0}
+  .side{background:var(--f-card);border:1px solid rgba(242,196,179,.22);max-height:70vh;width:auto}
+  .side h1{font-size:22px}
+  .glist{border:0;background:none;padding:0}
+  .gpill{font-family:var(--f-font);background:linear-gradient(#FBEFE9 0%,#F2C4B3 70%,#D9937C 100%);color:#1A1210;font-weight:600}
+  .gpill i{background:#1A1210;color:var(--f-acc)}
+  .gpill.hl{animation-name:hlf}
+  @keyframes hlf{50%{box-shadow:0 0 0 6px rgba(242,196,179,.5),0 10px 24px -8px rgba(0,0,0,.6);transform:scale(1.06)}}
+}

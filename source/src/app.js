@@ -498,8 +498,9 @@ document.addEventListener("keydown", e=>{ if(e.key === "Escape"){ toggleGuide(fa
 /* ================= phone scaling ================= */
 function fit(){ const slot = $("#phoneSlot"), phone = $("#phone");
   if(innerWidth <= 860){ slot.style.width = slot.style.height = ""; phone.style.transform = ""; return; }
-  const s = Math.min(1, (innerHeight - 36) / 868, (innerWidth - 420) / 414);
+  const s = Math.min(1, (innerHeight - 52 - 40) / 868, (innerWidth - 440) / 414);
   phone.style.transform = `scale(${s})`; slot.style.width = (414*s)+"px"; slot.style.height = (868*s)+"px";
 }
 addEventListener("resize", fit);
+$("#flamLogo").src = IMG.flam[2]; $("#noonLogo").src = IMG.t_noon_on[2];
 fit(); render(false);
