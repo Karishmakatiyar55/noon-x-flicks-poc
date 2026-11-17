@@ -52,21 +52,21 @@ const BRANDS = {
     head:"Bomber season", prod:"Zara", r:4.4, rc:"180", desc:"Three bomber jackets, one look. Switch jackets inside the video.",
     variants:[{n:"Checked bomber jacket",c:"#8a8f7a",p:399,was:459},{n:"Plaid bomber jacket",c:"#5a4a3c",p:399,was:459},{n:"Polka dot bomber jacket",c:"#23252b",p:379,was:459}] },
   mms:{ name:"M&M's", av:"m&m", avc:"#6b3f1d", src:T1+"6a8e82a03252dba34b484fa9_xvaz4d/ad.js", unit:"Pick", named:false,
-    head:"Pick your favourite", variants:[{n:"Option 1",c:"#d8232a"},{n:"Option 2",c:"#f2b632"},{n:"Option 3",c:"#2f8f3c"}] },
+    head:"Pick your favourite", prod:"M&M's Chocolate Pouch 180g", tag:"mn", variants:[{n:"Option 1",c:"#d8232a",p:14.5,was:16.75},{n:"Option 2",c:"#f2b632",p:14.5,was:16.75},{n:"Option 3",c:"#2f8f3c",p:14.5,was:16.75}] },
   cross:{ name:"Cross", av:"C", avc:"#3a2c22", src:T1+"6a9915fffac7a1784444e730_c3pgst/ad.js", unit:"Finish", named:false,
-    head:"A pen worth gifting", variants:[{n:"Finish 1",c:"#23252b"},{n:"Finish 2",c:"#b08d57"},{n:"Finish 3",c:"#8fa3a8"}] },
+    head:"A pen worth gifting", prod:"Cross Classic Century Ballpoint Pen", tag:"sm", variants:[{n:"Finish 1",c:"#23252b",p:249,was:299},{n:"Finish 2",c:"#b08d57",p:249,was:299},{n:"Finish 3",c:"#8fa3a8",p:249,was:299}] },
   cad:{ name:"Cadillac", av:"CAD", avc:"#1a1a1a", src:"https://flicks.flamapp.live/z70k1k/ad.js", dsp:"dv360", unit:"Model", named:true, dark:true,
-    head:"One drive, three Cadillacs", variants:[{n:"Optiq",c:"#c0392b"},{n:"Celestiq",c:"#26407a"},{n:"Escalade-V",c:"#e9e9e9"}] },
+    head:"One drive, three Cadillacs", per:" / day", variants:[{n:"Optiq",c:"#c0392b",p:499},{n:"Celestiq",c:"#26407a",p:3900},{n:"Escalade-V",c:"#e9e9e9",p:1600}] },
   bentley:{ name:"Bentley", av:"B", avc:"#24452f", src:T2+"6a9bc07393e71f3ec9b12c81_xogy7s/ad.js", unit:"Paint", named:true, fontScan:true, transparent:true,
-    head:"Beyond the ordinary", variants:[{n:"White",c:"#ecebe6"},{n:"Olive",c:"#9a9d3c"},{n:"Blue",c:"#1f4fa3"}] },
+    head:"Beyond the ordinary", per:" / day", variants:[{n:"White",c:"#ecebe6",p:3500},{n:"Olive",c:"#9a9d3c",p:3500},{n:"Blue",c:"#1f4fa3",p:3500}] },
   bk:{ name:"Burger King", av:"BK", avc:"#d62300", src:"https://flicks.flamapp.live/dzvxyq/ad.js", dsp:"house", g:"burger", unit:"Pick", named:false,
-    head:"Flame-grilled. Your way.", variants:[{n:"Option 1",c:"#e8a33d"},{n:"Option 2",c:"#d9822b"},{n:"Option 3",c:"#c9652a"}] },
+    head:"Flame-grilled. Your way.", per:" meal", variants:[{n:"Option 1",c:"#e8a33d",p:29},{n:"Option 2",c:"#d9822b",p:29},{n:"Option 3",c:"#c9652a",p:29}] },
   lc:{ name:"Little Caesars", av:"LC", avc:"#f26522", src:T1+"xlgqpx/ad.js", dsp:"dv360", g:"pizza", unit:"Pick", named:false,
-    head:"Hot and ready when you are", variants:[{n:"Option 1",c:"#f2b632"},{n:"Option 2",c:"#f2a03a"},{n:"Option 3",c:"#e98b2f"}] },
+    head:"Hot and ready when you are", per:" large pizza", variants:[{n:"Option 1",c:"#f2b632",p:27},{n:"Option 2",c:"#f2a03a",p:27},{n:"Option 3",c:"#e98b2f",p:27}] },
   bark:{ name:"BARK", av:"BARK", avc:"#0098d8", src:T1+"6a8e82a03252dba34b484fa9_zi294y/ad.js", g:"toy", unit:"Toy", named:false,
-    head:"Give your dog exactly what they want", variants:[{n:"Toy 1",c:"#f0705a"},{n:"Toy 2",c:"#37a6de"},{n:"Toy 3",c:"#f2b632"}] },
+    head:"Give your dog exactly what they want", prod:"BARK Super Chewer Dog Toy", tag:"mn", variants:[{n:"Toy 1",c:"#f0705a",p:59,was:75},{n:"Toy 2",c:"#37a6de",p:59,was:75},{n:"Toy 3",c:"#f2b632",p:59,was:75}] },
   merc:{ name:"Mercedes-Benz", av:"MB", avc:"#111", src:T2+"6a9bc07393e71f3ec9b12c81_i3pdeq/ad.js", g:"car", unit:"Paint", named:true, dark:true,
-    head:"The S-Class. Pick your paint.", variants:[{n:"White",c:"#f2f2f0"},{n:"Green",c:"#4f8a83"},{n:"Black",c:"#1b1b1d"}] }
+    head:"The S-Class. Pick your paint.", per:" / day", variants:[{n:"White",c:"#f2f2f0",p:1200},{n:"Green",c:"#4f8a83",p:1200},{n:"Black",c:"#1b1b1d",p:1200}] }
 };
 
 /* ================= illustrations (drawn for this demo, no product photos) ================= */
@@ -145,8 +145,8 @@ prod("bar1","Barakat x Kiri Strawberry Cheesecake Pop",12,null,0,"","grocery","m
 prod("bar2","Barakat x Kiri Summer Berries Cheesecake Pop",12,null,0,"","grocery","mn","80ml");
 prod("bar3","Barakat x Kiri Tropical Cheesecake Pop",12,null,0,"","grocery","mn","80ml");
 // The Flick products themselves: one listing per option in each retail Flick (no photo: the Flick is the picture).
-Object.keys(BRANDS).forEach(k=>{ const b=BRANDS[k]; if(!b.retail) return;
-  b.variants.forEach((v,i)=>{ P[`${k}-${i}`]={id:`${k}-${i}`,brand:k,vi:i,n:vname(k,i),p:v.p,was:v.was,r:b.r,rc:b.rc,c:v.c,tag:b.tag,cat:"flick"}; }); });
+Object.keys(BRANDS).forEach(k=>{ const b=BRANDS[k]; if(!b.prod) return;
+  b.variants.forEach((v,i)=>{ P[`${k}-${i}`]={id:`${k}-${i}`,brand:b.retail?k:undefined,vi:i,n:b.retail?vname(k,i):`${b.prod} (option ${i+1} of 3)`,p:v.p,was:v.was,r:b.r,rc:b.rc,c:v.c,tag:b.tag,cat:"flick"}; }); });
 function vname(k,i){ const b=BRANDS[k], v=b.variants[i]; return k==="bose"||k==="sony"||k==="nike"||k==="pata" ? `${b.prod}, ${v.n}` : `${b.prod} ${v.n}`; }
 const vshort = (k,i) => BRANDS[k].variants[i].short || BRANDS[k].variants[i].n;
 

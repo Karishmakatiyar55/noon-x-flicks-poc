@@ -366,3 +366,12 @@ svg{display:block}input{font:inherit;color:inherit}
 .shelf .mini,.brandad .mini{color:var(--ink)}
 .pmi::after{content:"";position:absolute;right:15%;bottom:0;width:21%;height:22%;background:#fff}
 .pmi::before{content:"";position:absolute;right:15%;top:0;width:16%;height:16%;background:#fff}
+
+/* ---- watch and shop page ---- */
+.wcard{background:#fff;margin:10px 0;padding-bottom:12px}
+.wh{display:flex;align-items:center;gap:9px;padding:10px 14px}.wh div{flex:1;min-width:0}.wh b{display:block;font-size:14px;line-height:1.15}.wh span{font-size:11px;color:var(--ink2)}
+.wm.tall{background:#141518;display:flex;justify-content:center}.wm.tall>div{width:62%}
+.wb{padding:10px 14px 0}.wr{display:flex;gap:8px;align-items:center;margin-top:10px}.wr .buy{flex:1}
+.wq{position:relative;width:96px;height:36px;flex:none}.wq .addc{right:0;bottom:3px}
+.wbar{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0;padding:14px 18px 24px;background:#1c1e26;color:#fff;font-size:14px;width:100%}
+.wbar b{color:var(--yellow)}.wbar span b{color:#fff}

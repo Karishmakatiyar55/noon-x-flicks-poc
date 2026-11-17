@@ -32,6 +32,8 @@ function refreshAdds(){
     el.innerHTML = q ? `<button aria-label="Remove one" onclick="addToCart('${pid}',-1)">${I.minus}</button><span class="q">${q}</span><button aria-label="Add one" onclick="addToCart('${pid}',1)">${I.plus}</button>`
                      : `<button aria-label="Add to cart" onclick="addToCart('${pid}',1)">${I.plus}</button>`; });
   $$("[data-cartn]").forEach(el=>el.textContent = cartCount()||"");
+  const tot = Object.keys(CART).reduce((a,id)=>a+P[id].p*CART[id],0);
+  $$("[data-cartbar]").forEach(el=>el.innerHTML = cartCount() ? `<span><b>${cartCount()} item${cartCount()>1?"s":""}</b> in cart · AED ${num(Math.round(tot*100)/100)}</span><b>View cart ›</b>` : `<span>Add what you like as you watch</span><b>Cart ›</b>`);
 }
 function addToCart(pid,n=1,quiet){ if(!P[pid]) return;
   CART[pid]=Math.max(0,qty(pid)+n); if(!CART[pid]) delete CART[pid];
@@ -137,7 +139,7 @@ function applyVariant(id, i){
   const v = b.variants[i], pid = `${s.brand}-${i}`;
   $$(`[data-sn="${id}"]`).forEach(e=>e.textContent = b.retail ? vname(s.brand,i) : v.n);
   $$(`[data-sv="${id}"]`).forEach(e=>e.textContent = b.named ? vshort(s.brand,i) : `${i+1} of ${n}`);
-  $$(`[data-sp="${id}"]`).forEach(e=>e.innerHTML = priceHTML(v.p, v.was));
+  $$(`[data-sp="${id}"]`).forEach(e=>e.innerHTML = priceHTML(v.p, v.was) + (b.per||""));
   $$(`[data-sa="${id}"]`).forEach(e=>e.dataset.add = pid);
   $$(`[data-sd="${id}"] i`).forEach((e,j)=>e.classList.toggle("on", j===i));
   $$(`[data-sync="${id}"]`).forEach(e=>e.classList.toggle("on", +e.dataset.i===i));
@@ -148,8 +150,9 @@ function ctaGo(id){ const s = SLOTS[id]; if(!s) return; const b = BRANDS[s.brand
   if(s.cta==="pdp") go(`#/p/${s.brand}/${s.v}`);
   else if(s.cta==="add") addToCart(`${s.brand}-${s.v}`);
   else if(s.cta==="rest") go(`#/rest/${s.brand}`);
-  else if(s.cta==="rent") toast(`Request noted: ${b.name} ${b.unit==="Model"?"":"in "}${b.variants[s.v].n}. Booking is outside this demo`);
-  else if(s.cta==="store") toast(`${b.name} store pages are outside this demo`);
+  else if(s.cta==="rent") toast(`Request noted: ${b.name} ${b.unit==="Model"?"":"in "}${b.variants[s.v].n}, AED ${num(b.variants[s.v].p)} a day. Booking is outside this demo`);
+  else if(s.cta==="store"){ if(P[`${s.brand}-${s.v}`]) addToCart(`${s.brand}-${s.v}`); else toast(`${b.name} store pages are outside this demo`); }
+  else if(s.cta==="watch") go(`#/watch/${s.brand}`);
 }
 function pickOrOpen(id, i){ const s = SLOTS[id]; if(!s) return; if(s.v===i && BRANDS[s.brand].retail) go(`#/p/${s.brand}/${i}`); else setVariant(id, i); }
 window.addEventListener("message", e=>{
@@ -227,13 +230,13 @@ function adTile(id, k, anchor, w=216){ const b = BRANDS[k];
 function adCard(id, k, anchor, o={}){ const b = BRANDS[k], v = b.variants[0];
   return `<div class="adcard ${o.cls||""}" data-anchor="${anchor}" style="${o.style||""}"><span class="adtag">Ad</span>${flick(id,k,{cta:o.cta||"pdp"})}
   <div class="adb" data-spop="${id}"><div><div class="br">${av(k)}${esc(b.name)}</div><h4 style="margin-top:6px">${esc(o.head||b.head)}</h4></div>
-  <div class="vline"><span><b data-sv="${id}">${b.named?esc(vshort(k,0)):"1 of 3"}</b>${v.p?` · <span class="price" style="display:inline-flex;font-size:13px" data-sp="${id}">${priceHTML(v.p,v.was)}</span>`:""}</span>${dots(id)}</div>
+  <div class="vline"><span><b data-sv="${id}">${b.named?esc(vshort(k,0)):"1 of 3"}</b>${v.p?` · <span class="price" style="display:inline-flex;font-size:13px" data-sp="${id}">${priceHTML(v.p,v.was)}${b.per||""}</span>`:""}</span>${dots(id)}</div>
   <button class="cta ${o.ccls||""}" onclick="ctaGo('${id}')">${o.label||"Order Now"} ${I.right}</button></div></div>`; }
 // Video card: a 9:16 Flick in a "watch and shop" row.
 function tallCard(id, k, anchor){ const b = BRANDS[k], v = b.variants[0];
-  return `<div class="adcard" data-anchor="${anchor}" style="width:214px;flex:none"><span class="adtag">Ad</span>${flick(id,k)}
+  return `<div class="adcard" data-anchor="${anchor}" style="width:214px;flex:none"><span class="adtag">Ad</span>${flick(id,k,{cta:"watch"})}
   <div class="adb" data-spop="${id}"><div class="br">${av(k)}${esc(b.name)} ${dots(id)}</div><div class="vline"><b data-sv="${id}" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(vshort(k,0))}</b></div><div class="price" style="font-size:13px" data-sp="${id}">${priceHTML(v.p,v.was)}</div>
-  <button class="cta" onclick="ctaGo('${id}')">Shop now ${I.right}</button></div></div>`; }
+  <div style="display:flex;gap:6px"><button class="cta" style="flex:1;padding:0 8px" onclick="addToCart('${k}-'+SLOTS['${id}'].v)">Add to cart</button><button class="cta" style="background:var(--bg);color:var(--ink);padding:0 12px" onclick="go('#/watch/${k}')" aria-label="Open in Watch and shop">${I.play}</button></div></div></div>`; }
 const mini = (id,k,i) => { const v = BRANDS[k].variants[i]; return `<div class="mini ${i?"":"on"}" data-sync="${id}" data-i="${i}" onclick="pickOrOpen('${id}',${i})" role="button" tabindex="0"><span class="nm"><i class="sw" style="background:${v.c}"></i>${esc(vshort(k,i))}</span><b class="price" style="font-size:12.5px">${priceHTML(v.p)}</b>${addc(`${k}-${i}`)}</div>`; };
 const minis = (id,k) => `<div class="prow">${BRANDS[k].variants.map((_,i)=>mini(id,k,i)).join("")}</div>`;
 // Brand Ad shelf: a brand's block on a home page, video on top and its three products under it.
@@ -255,8 +258,8 @@ function noonScreen(){
   ${bimg("b_philips")}
   ${sec("Offers for you", slice("s_coupons","toast('Offer codes are not active in this demo')"))}
   ${sec("Bestsellers for you", `<div class="row">${tile("iph")}${adTile("best","sony","best")}${tile("s25")}</div>`)}
-  <div class="row" style="padding-top:8px;align-items:flex-start">${icard("a_eucerin",160)}${adCard("crd1","cross","crd1",{style:"width:236px",cta:"store",label:"Shop now"})}${icard("a_tv",160)}</div>
-  ${sec("Watch and shop", `<div class="row" style="align-items:flex-start">${tallCard("w1","zara","w1")}${tallCard("w2","acer","w2")}${adCard("w3","mms","w3",{style:"width:236px",cta:"store",label:"Order Now"})}</div>`, "", "Sponsored videos · tap an option inside the video")}
+  <div class="row" style="padding-top:8px;align-items:flex-start">${icard("a_eucerin",160)}${adCard("crd1","cross","crd1",{style:"width:236px",cta:"store",label:"Add to cart"})}${icard("a_tv",160)}</div>
+  ${sec("Watch and shop", `<div class="row" style="align-items:flex-start">${tallCard("w1","zara","w1")}${tallCard("w2","acer","w2")}${adCard("w3","mms","w3",{style:"width:236px",cta:"store",label:"Add to cart"})}<button class="vid" style="width:150px;height:auto;align-self:stretch;min-height:300px;background:linear-gradient(160deg,#1c1e26,#3a2fd0);justify-content:center;align-items:center;text-align:center" onclick="go('#/watch')"><span class="play" style="position:static;margin:0 0 10px">${I.play}</span><b>Watch more</b><span>Shop as you watch</span></button></div>`, "go('#/watch')", "Sponsored videos · tap an option inside the video")}
   ${shelf("shelf","lego","shelf","#1552d6","Three cars.<br>One starting grid.","Brand Ad")}
   <section style="background:#0b5bd8;padding-bottom:14px;margin-top:14px">${slice("b_hotwheels","go('#/cat/toys')")}<div class="row">${["hw1","hw2","hw4","hw5"].map(tile).join("")}</div><button class="all" style="display:flex;justify-content:center;align-items:center;gap:6px;margin:10px 14px 0;height:42px;border-radius:10px;background:#fff;font-weight:700;width:calc(100% - 28px)" onclick="go('#/cat/toys')">View All ${I.right}</button></section>
   ${sec("Grocery must haves", `<div class="row">${tile("vos")}${adTile("gro","gm","gro")}${tile("tis")}${tile("wat")}${tile("mlk")}</div>`, "go('#/minutes')")}
@@ -305,7 +308,7 @@ function minutesScreen(){
   ${sec("Ice cream & frozen treats", `<div class="row">${adTile("mice","bj","mice")}${tile("bar1")}${tile("bar2")}${tile("bar3")}</div>`, "out('Ice cream')", "Delivered in 15 mins!")}
   ${sec("Snacks", row(["lay1","lay2","lay3"]), "", "Delivered in 15 mins!")}
   ${sec("Make the leap with PUMA", row(["puma1","puma2"]), "", "Delivered in 15 mins!")}
-  ${sec("Sweet treats", `<div class="wide">${adCard("msw","mms","msw",{cta:"store",label:"Order Now",ccls:"acc"})}</div>`, "", "Sponsored · Delivered in 15 mins")}
+  ${sec("Sweet treats", `<div class="wide">${adCard("msw","mms","msw",{cta:"store",label:"Add to cart",ccls:"acc"})}</div>`, "", "Sponsored · Delivered in 15 mins")}
   ${slice("s_mfinds","out('Minutes unique finds')")}
   ${FOOT}</div>${nav("home")}</div>`;
 }
@@ -313,14 +316,26 @@ function nownowScreen(){
   return `<div class="screen t-nownow">${hdr("nownow", locRow()+`<button class="sbox" onclick="out('Store search')">${I.search}<span>Search flowers</span></button>`)}<div class="scr" id="scr">
   ${sec("Shop by department", slice("s_ndept","",[4,2,["out('Groceries')","out('Butcheries')","scrollToAnchor('pet')","out('Lifestyle')","out('Pharmacies')","out('Flowers')","openCar()","out('Beauty')"]]))}
   ${bimg("b_ndeliv")}${slice("s_nfocus","out('This store')")}${slice("s_nstores","out('This store')")}
-  ${sec("Pet care, delivered", `<div class="wide">${adCard("pet","bark","pet",{cta:"store",label:"Shop pet care",ccls:"acc"})}</div>`, "", "Sponsored")}
+  ${sec("Pet care, delivered", `<div class="wide">${adCard("pet","bark","pet",{cta:"store",label:"Add to cart",ccls:"acc"})}</div>`, "", "Sponsored")}
   ${slice("b_enbd","out('The credit card offer')")}
   ${slice("s_nrent","openCar()",null,"car")}
   <div class="wide"><button class="cta acc" style="width:100%;margin:2px 0 10px" onclick="openCar()">Car rentals: see the interactive ad ${I.right}</button></div>
   <div class="row" style="align-items:flex-start">${adCard("car2","cad","car2",{style:"width:280px",cta:"rent",label:"RENT A CAR"})}${adCard("car3","bentley","car3",{style:"width:280px",cta:"rent",label:"RENT A CAR"})}</div>
   ${bimg("b_wash","out('noon wash')")}${slice("s_nflu","out('This store')")}
-  ${sec("Gifts, delivered today", `<div class="wide">${adCard("ngift","cross","ngift",{cta:"store",label:"Shop gifts",ccls:"acc"})}</div>`, "", "Sponsored · Lifestyle")}
+  ${sec("Gifts, delivered today", `<div class="wide">${adCard("ngift","cross","ngift",{cta:"store",label:"Add to cart",ccls:"acc"})}</div>`, "", "Sponsored · Lifestyle")}
   ${FOOT}</div>${nav("home")}</div>`;
+}
+// Watch and shop: a feed of shoppable videos. Each one adds the option on screen to the cart.
+const WATCH = ["zara","acer","nike","levis","gap","pata","bose","sony","lego"];
+function watchScreen(){
+  const card = k => { const b = BRANDS[k], v = b.variants[0], id = "wv_"+k;
+    return `<article class="wcard" data-anchor="wv-${k}"><div class="wh">${av(k)}<div><b>${esc(b.name)}</b><span>Sponsored · ${esc(b.head)}</span></div>${dots(id)}</div>
+    <div class="wm ${b.tall?"tall":""}"><div>${flick(id,k,{cta:"add"})}</div></div>
+    <div class="wb" data-spop="${id}"><div class="pname" style="min-height:0;font-size:14px" data-sn="${id}">${esc(vname(k,0))}</div><div class="price" style="font-size:18px;margin-top:4px" data-sp="${id}">${priceHTML(v.p,v.was)}</div>
+    <div class="wr"><button class="buy" onclick="addToCart('${k}-'+SLOTS['${id}'].v)">Add To Cart</button><div class="wq">${addc(`${k}-0`,`data-sa="${id}"`)}</div><button class="cta" style="background:var(--bg);color:var(--ink);height:46px;border-radius:12px" onclick="go('#/p/${k}/'+SLOTS['${id}'].v)">Details</button></div></div></article>`; };
+  return `<div class="screen"><div class="stop"><button class="rbtn" style="box-shadow:none" onclick="back()" aria-label="Back">${I.back}</button><b style="font-size:17px;flex:1">Watch and shop</b><button class="rbtn" style="box-shadow:none;position:relative" onclick="go('#/cart')" aria-label="Cart">${I.cart}<i class="cnt" style="position:absolute;top:0;right:0;min-width:17px;height:17px;border-radius:9px;background:var(--red);color:#fff;font-size:10px;font-weight:800;font-style:normal;display:grid;place-items:center;padding:0 4px" data-cartn></i></button></div>
+  <div class="scr" id="scr" style="padding-bottom:16px;background:var(--bg)"><div class="sec-sub" style="margin:12px 0 4px">Tap an option inside a video to switch it. Add to cart takes the one on screen.</div>${WATCH.map(card).join("")}${FOOT}</div>
+  <button class="wbar" data-cartbar onclick="go('#/cart')"></button></div>`;
 }
 function searchScreen(q){
   q = (q||"").trim().toLowerCase(); const key = Object.keys(SEARCH).find(k=>q && (q.includes(k) || k.includes(q))) || (q.includes("nike")?"leggings":q.includes("bose")?"earbuds":q.includes("sony")?"headphones":"");
@@ -397,7 +412,7 @@ function openViewer(k, o={}){ const b = BRANDS[k], v = b.variants[0];
 }
 function openCar(){
   openOver(`<div class="scrim" onclick="closeOver()"></div><div class="sheet" role="dialog" aria-label="Car rentals"><div class="shd"><b>Car Rentals</b><span class="adtag">Ad</span><button onclick="closeOver()" aria-label="Close">${I.x}</button></div>${flick("car","merc",{cta:"rent"})}
-  <div class="sb" data-spop="car"><h3>Introducing car rentals</h3><p>Sponsored · Mercedes-Benz S-Class · showing <b data-sv="car" style="color:var(--ink)">White</b>. Rates and availability are not shown in this demo.</p><button class="cta" style="width:100%;height:46px" onclick="ctaGo('car')">RENT A CAR</button></div></div>`);
+  <div class="sb" data-spop="car"><h3>Introducing car rentals</h3><p>Sponsored · Mercedes-Benz S-Class · showing <b data-sv="car" style="color:var(--ink)">White</b> · <b style="color:var(--ink)">AED 1,200 / day</b> (illustrative rate).</p><button class="cta" style="width:100%;height:46px" onclick="ctaGo('car')">RENT A CAR</button></div></div>`);
 }
 
 /* ================= router ================= */
@@ -417,17 +432,18 @@ function render(anim=true){
   // Leaving a screen removes its Flicks outright, so nothing can keep playing behind the next screen.
   $$(".flick[data-slot]", VIEW).forEach(unmount); SLOTS = {}; CURH = h;
   if(VERTS.includes(r.name)) VERT = r.name;
-  const S = {noon:noonScreen, supermall:supermallScreen, food:foodScreen, minutes:minutesScreen, nownow:nownowScreen, search:()=>searchScreen(r.a), cats:catsScreen, cat:()=>catScreen(r.a), p:()=>productScreen(r.a, +r.b||0), item:()=>itemScreen(r.a), rest:()=>restScreen(r.a), cart:cartScreen, account:accountScreen};
+  const S = {noon:noonScreen, supermall:supermallScreen, food:foodScreen, minutes:minutesScreen, nownow:nownowScreen, search:()=>searchScreen(r.a), watch:watchScreen, cats:catsScreen, cat:()=>catScreen(r.a), p:()=>productScreen(r.a, +r.b||0), item:()=>itemScreen(r.a), rest:()=>restScreen(r.a), cart:cartScreen, account:accountScreen};
   VIEW.innerHTML = (S[r.name] || noonScreen)();
   const scrn = $(".screen", VIEW), sc = $("#scr", VIEW);
   if(!VERTS.includes(r.name) && r.name!=="rest") scrn.classList.add("t-"+VERT);
   if(anim && lastHash && !VERTS.includes(r.name)) scrn.classList.add(dir);
   APP.style.setProperty("--hdrink", r.name==="minutes" ? "#fff" : "#1c1e26");
-  document.body.classList.toggle("hasbuy", r.name==="p" || r.name==="item");
+  document.body.classList.toggle("hasbuy", r.name==="p" || r.name==="item" || r.name==="watch");
   lastHash = h;
   Object.values(SLOTS).forEach(s=>{ if(s.v) applyVariant(s.id, s.v); });
   refreshAdds();
   if(dir === "enter-back" && SCROLL[h] && sc) sc.scrollTop = SCROLL[h];
+  if(r.name === "watch" && r.a && !pendingAnchor) pendingAnchor = "wv-"+r.a;
   const anc = pendingAnchor, act = pendingAct; pendingAnchor = pendingAct = null;
   if(anc) setTimeout(()=>scrollToAnchor(anc), 80);
   if(act) setTimeout(act, anc ? 500 : 120);
@@ -438,20 +454,19 @@ addEventListener("hashchange", ()=>render(true));
 
 /* ================= placements guide ================= */
 const GUIDE = [
-  ["noon", "#e0b400", [["Home carousel, first banner","#/noon","hero","Bose"],["Home carousel, banner 3","#/noon","hero2","Gap"],["Home carousel, banner 5","#/noon","hero3","Patagonia"],
-    ["Product Ad in Bestsellers","#/noon","best","Sony"],["Display card between offers","#/noon","crd1","Cross"],["Watch and shop video","#/noon","w1","Zara"],["Watch and shop video","#/noon","w2","Acer"],["Watch and shop card","#/noon","w3","M&M's"],
-    ["Brand Ad shelf","#/noon","shelf","LEGO"],["Product Ad in Grocery must haves","#/noon","gro","General Mills"],
-    ["Brand Ad, top of search","#/search/earbuds","top","Bose"],["Brand Ad, top of search","#/search/headphones","top","Sony"],["Product Ad inside results","#/search/leggings","inline","Nike"],
-    ["Category banner: Toys","#/cat/toys","catb","LEGO"],["Category banner: Women's Fashion","#/cat/wfashion","catb","Levi's"],["Product page media","#/p/bose/0","pdp","Bose"],["App-open interstitial","#/noon","", "Acer", ()=>openViewer("acer",{label:"Shop now",sub:"closes any time"})]]],
-  ["supermall", "#3a2fd0", [["Featured banner","#/supermall","sm","Nike"],["Featured banner","#/supermall","sm2","Gap"],["Product Ad in a brand row","#/supermall","smrow","Levi's"],["Product Ad in mobile accessories","#/supermall","smacc","Bose"],["Brand Ad shelf","#/supermall","smshelf","Sony"]]],
-  ["noon Food", "#d4006a", [["In the spotlight","#/food","spot","Little Caesars"],["In the spotlight","#/food","spot2","Burger King"],["Featured video","#/food","vid","Burger King", ()=>openViewer("bk",{cta:"rest",label:"Order now"})],["Featured video","#/food","vid2","Little Caesars", ()=>openViewer("lc",{cta:"rest",label:"Order now"})],["Ad inside the restaurant list","#/food","fdes","Ben & Jerry's"],["Restaurant page","#/rest/bk","rest","Burger King"]]],
-  ["noon Minutes", "#c4102b", [["Product Ad in the first row","#/minutes","mrow","General Mills"],["Banner carousel, first banner","#/minutes","mban","General Mills"],["Banner carousel, banner 3","#/minutes","mban2","Doritos"],["Banner carousel, banner 5","#/minutes","mban3","Ben & Jerry's"],["Sponsored shelf","#/minutes","mshelf","Doritos"],["Product Ad in a category row","#/minutes","mice","Ben & Jerry's"],["Display card","#/minutes","msw","M&M's"]]],
-  ["NowNow", "#e2402a", [["Department ad: Pet Care","#/nownow","pet","BARK"],["Rent a car ad","#/nownow","car2","Cadillac"],["Rent a car ad","#/nownow","car3","Bentley"],["Department ad: Lifestyle gifts","#/nownow","ngift","Cross"],["Car rentals takeover","#/nownow","car","Mercedes-Benz", ()=>openCar()]]]
+  ["Swipeable banners", "#e0b400", [["noon home carousel","#/noon","hero"],["supermall featured banners","#/supermall","sm"],["noon Minutes carousel","#/minutes","mban"],["noon Food: In the spotlight","#/food","spot"]]],
+  ["Product Ads in rows", "#3866df", [["noon: Bestsellers row","#/noon","best"],["noon: Grocery row","#/noon","gro"],["supermall: brand row","#/supermall","smrow"],["noon Minutes: product row","#/minutes","mrow"]]],
+  ["Brand Ad shelves", "#3a2fd0", [["noon home shelf","#/noon","shelf"],["supermall shelf","#/supermall","smshelf"],["noon Minutes shelf","#/minutes","mshelf"]]],
+  ["Shoppable video", "#d4006a", [["noon: Watch and shop row","#/noon","w1"],["Watch and shop page","#/watch","wv-zara"],["noon Food: featured videos","#/food","vid",0,()=>openViewer("bk",{cta:"rest",label:"Order now"})]]],
+  ["Search", "#2f8f3c", [["Brand Ad at top of search","#/search/earbuds","top"],["Product Ad inside results","#/search/leggings","inline"]]],
+  ["Category and product pages", "#c4102b", [["Category page banner","#/cat/toys","catb"],["Product page video","#/p/bose/0","pdp"],["Restaurant page video","#/rest/bk","rest"]]],
+  ["Display cards in the feed", "#e2402a", [["noon home: between offers","#/noon","crd1"],["noon Food: inside the restaurant list","#/food","fdes"],["noon Minutes: display card","#/minutes","msw"],["NowNow: department ads","#/nownow","pet"],["NowNow: rent a car","#/nownow","car2"]]],
+  ["Full screen", "#1c1e26", [["App-open interstitial","#/noon","",0,()=>openViewer("acer",{label:"Shop now",sub:"closes any time"})],["Takeover sheet","#/nownow","car",0,()=>openCar()]]]
 ];
 let curPick = "";
 function buildGuide(){ let n = 0;
   $("#glist").innerHTML = GUIDE.map(([sec,col,items],si)=>`<h6><i style="background:${col}"></i>${sec}</h6>` + items.map((it,ii)=>{ n++; const key = si+"-"+ii;
-    return `<button class="gitem ${key===curPick?"cur":""}" onclick="pick(${si},${ii})"><span class="n">${n}</span>${it[0]}<span class="b">${it[3]}</span></button>`; }).join("")).join("");
+    return `<button class="gitem ${key===curPick?"cur":""}" onclick="pick(${si},${ii})"><span class="n">${n}</span>${it[0]}</button>`; }).join("")).join("");
   $("#gcount").textContent = n;
 }
 function pick(si, ii){ const it = GUIDE[si][2][ii]; curPick = si+"-"+ii; toggleGuide(false);

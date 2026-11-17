@@ -4,7 +4,9 @@ A clickable concept of Flam Flicks (interactive video ads) placed inside the noo
 
 Open `index.html` in Chrome or Safari, or host the single file anywhere static (GitHub Pages, Vercel). On a laptop it shows a phone frame with the list of placements beside it; on a phone it fills the screen and the "Ad placements" button opens the list.
 
-## Placements (40 entries in the placements list, across the five verticals)
+## Placements
+
+The on-page list groups them by slot type (swipeable banners, Product Ads in rows, Brand Ad shelves, shoppable video, search, category and product pages, display cards in the feed, full screen), 26 entries, with no brand names. By vertical:
 
 - noon: home carousel with three Flicks between the static banners, the first banner being a Flick (Bose, Gap, Patagonia); Product Ads in Bestsellers (Sony) and Grocery must haves (General Mills); a display card between offer cards (Cross); a Watch and shop video row (Zara, Acer, M&M's); Brand Ad shelf (LEGO); Brand Ads at top of search (Bose, Sony); Product Ad inside results (Nike); category banners (LEGO, Levi's and others); product page media; app-open interstitial (Acer)
 - supermall: featured banners (Nike, Gap), Product Ads in rows (Levi's, Bose), Brand Ad shelf (Sony)
@@ -13,6 +15,10 @@ Open `index.html` in Chrome or Safari, or host the single file anywhere static (
 - NowNow: Pet Care (BARK), rent a car ads (Cadillac, Bentley), Lifestyle gifts (Cross), car rentals takeover (Mercedes-Benz)
 
 At most four Flick players are kept running at once (those nearest the screen); others load as they come into view.
+
+## Watch and shop
+
+The Watch and shop row on the noon home page opens a page of shoppable videos (`#/watch`). Add To Cart takes the option showing in the video; the bar at the bottom keeps the running count and total, and the cart is shared with every other screen.
 
 ## How it behaves
 
@@ -26,7 +32,7 @@ At most four Flick players are kept running at once (those nearest the screen); 
 Concept demo built by Flam for partner conversations. Not affiliated with or endorsed by noon or the brands shown.
 
 - The app content around the ads (vertical tabs, banners, category tiles, product photos, restaurant photos, offers) is cut from a screen recording of the noon UAE app made on 17 Nov 2026 and embedded in the file. Names, prices and offers are as shown that day. Those banners and photos belong to noon and the brands in them.
-- The Flick products (Bose, Sony, LEGO, Nike, Levi's, Gap, Patagonia, Zara, Acer, General Mills, Doritos, Ben & Jerry's) have no still photo: the Flick is their picture. Their AED prices are illustrative.
+- The Flick products (Bose, Sony, LEGO, Nike, Levi's, Gap, Patagonia, Zara, Acer, General Mills, Doritos, Ben & Jerry's) have no still photo: the Flick is their picture. Their AED prices are illustrative, set at about what each item sells for in the UAE. Car rental day rates are illustrative too.
 - The Burger King and Little Caesars menus are illustrative. Burger King, Little Caesars, BARK, M&M's and Cross options are shown as "1 of 3" because their option names were not available.
 
 ## Editing
