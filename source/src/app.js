@@ -39,7 +39,7 @@ function addToCart(pid,n=1,quiet){ if(!P[pid]) return;
   CART[pid]=Math.max(0,qty(pid)+n); if(!CART[pid]) delete CART[pid];
   refreshAdds(); $$(`[data-add="${pid}"]`).forEach(e=>{e.classList.remove("bump");void e.offsetWidth;e.classList.add("bump")});
   if(n>0 && !quiet) toast(`Added: ${P[pid].n.slice(0,44)}${P[pid].n.length>44?"...":""}`);
-  if(parse().name==="cart") render(false);
+  const cl = $("#cartlist"); if(cl){ cl.innerHTML = cartList(); refreshAdds(); }
 }
 
 /* ================= Flick embed ================= */
@@ -249,7 +249,7 @@ function shelf(id, k, anchor, bg, title, sub){
   <div class="box">${flick(id,k)}${minis(id,k)}<div style="height:10px"></div></div><button class="all" onclick="go('#/search/${k==="lego"?"lego":encodeURIComponent(BRANDS[k].name.toLowerCase())}')">View All ${I.right}</button></section>`; }
 function brandAd(id, k, anchor){ const b = BRANDS[k];
   return `<div class="brandad" data-anchor="${anchor}"><div class="bh">${av(k)}<div><b>${esc(b.head)}</b><span>Sponsored · ${esc(b.name)}</span></div><button class="cta" onclick="ctaGo('${id}')">Shop now</button></div>${flick(id,k)}${minis(id,k)}</div>`; }
-const FOOT = `<div class="note">Concept demo built by Flam for partner conversations. Not affiliated with or endorsed by noon or the brands shown. The app content around the ads is cut from a screen recording of the noon app made on 17 Nov 2026; prices and offers are as shown that day. The videos marked Ad with an option switcher are live Flam Flicks.</div>`;
+const FOOT = "";
 const hdr = (v, inner) => `<header class="hdr">${tabsHTML(v)}${inner}</header>`;
 
 /* ================= screens ================= */
@@ -263,7 +263,7 @@ function noonScreen(){
   ${sec("Offers for you", slice("s_coupons","toast('Offer codes are not active in this demo')"))}
   ${sec("Bestsellers for you", `<div class="row">${tile("iph")}${adTile("best","sony","best")}${tile("s25")}</div>`)}
   <div class="row" style="padding-top:8px;align-items:flex-start">${icard("a_eucerin",160)}${adCard("crd1","cross","crd1",{style:"width:236px",cta:"store",label:"Add to cart"})}${icard("a_tv",160)}</div>
-  ${sec("Watch and shop", `<div class="row" style="align-items:flex-start">${tallCard("w1","zara","w1")}${tallCard("w2","acer","w2")}${adCard("w3","mms","w3",{style:"width:236px",cta:"store",label:"Add to cart"})}<button class="vid" style="width:150px;height:auto;align-self:stretch;min-height:300px;background:linear-gradient(160deg,#1c1e26,#3a2fd0);justify-content:center;align-items:center;text-align:center" onclick="go('#/watch')"><span class="play" style="position:static;margin:0 0 10px">${I.play}</span><b>Watch more</b><span>Shop as you watch</span></button></div>`, "go('#/watch')", "Sponsored videos · tap an option inside the video")}
+  ${sec("Watch and shop", `<div class="row" style="align-items:flex-start">${tallCard("w1","zara","w1")}${tallCard("w2","acer","w2")}${adCard("w3","mms","w3",{style:"width:236px",cta:"store",label:"Add to cart"})}<button class="vid" style="width:150px;height:auto;align-self:stretch;min-height:300px;background:linear-gradient(160deg,#1c1e26,#3a2fd0);justify-content:center;align-items:center;text-align:center" onclick="go('#/watch')"><span class="play" style="position:static;margin:0 0 10px">${I.play}</span><b>Watch more</b><span>Shop as you watch</span></button></div>`, "go('#/watch')", "Sponsored")}
   ${shelf("shelf","lego","shelf","#1552d6","Three cars.<br>One starting grid.","Brand Ad")}
   <section style="background:#0b5bd8;padding-bottom:14px;margin-top:14px">${slice("b_hotwheels","go('#/cat/toys')")}<div class="row">${["hw1","hw2","hw4","hw5"].map(tile).join("")}</div><button class="all" style="display:flex;justify-content:center;align-items:center;gap:6px;margin:10px 14px 0;height:42px;border-radius:10px;background:#fff;font-weight:700;width:calc(100% - 28px)" onclick="go('#/cat/toys')">View All ${I.right}</button></section>
   ${sec("Grocery must haves", `<div class="row">${tile("vos")}${adTile("gro","gm","gro")}${tile("tis")}${tile("wat")}${tile("mlk")}</div>`, "go('#/minutes')")}
@@ -338,7 +338,7 @@ function watchScreen(){
     <div class="wb" data-spop="${id}"><div class="pname" style="min-height:0;font-size:14px" data-sn="${id}">${esc(vname(k,0))}</div><div class="price" style="font-size:18px;margin-top:4px" data-sp="${id}">${priceHTML(v.p,v.was)}</div>
     <div class="wr"><button class="buy" onclick="addToCart('${k}-'+SLOTS['${id}'].v)">Add To Cart</button><div class="wq">${addc(`${k}-0`,`data-sa="${id}"`)}</div><button class="cta" style="background:var(--bg);color:var(--ink);height:46px;border-radius:12px" onclick="go('#/p/${k}/'+SLOTS['${id}'].v)">Details</button></div></div></article>`; };
   return `<div class="screen"><div class="stop"><button class="rbtn" style="box-shadow:none" onclick="back()" aria-label="Back">${I.back}</button><b style="font-size:17px;flex:1">Watch and shop</b><button class="rbtn" style="box-shadow:none;position:relative" onclick="go('#/cart')" aria-label="Cart">${I.cart}<i class="cnt" style="position:absolute;top:0;right:0;min-width:17px;height:17px;border-radius:9px;background:var(--red);color:#fff;font-size:10px;font-weight:800;font-style:normal;display:grid;place-items:center;padding:0 4px" data-cartn></i></button></div>
-  <div class="scr" id="scr" style="padding-bottom:16px;background:var(--bg)"><div class="sec-sub" style="margin:12px 0 4px">Tap an option inside a video to switch it. Add to cart takes the one on screen.</div>${WATCH.map(card).join("")}${FOOT}</div>
+  <div class="scr" id="scr" style="padding-bottom:16px;background:var(--bg)"><div style="height:4px"></div>${WATCH.map(card).join("")}${FOOT}</div>
   <button class="wbar" data-cartbar onclick="go('#/cart')"></button></div>`;
 }
 function searchScreen(q){
@@ -375,26 +375,30 @@ function productScreen(k, i){ const b = BRANDS[k]; if(!b || !b.retail) return it
   <div class="pinfo"><span class="bchip">✓ ${esc(b.name)}</span><h1 data-sn="pdp" data-spop="pdp">${esc(vname(k,i))}</h1><div class="rate" style="font-size:13px">${I.star}<b>${b.r}</b> (${b.rc})</div>
   <div class="price" data-sp="pdp">${priceHTML(v.p,v.was)}</div>
   <div class="opt"><label>${b.unit}: <b data-ol>${esc(vshort(k,i))}</b></label><div class="opts">${b.variants.map((x,j)=>`<button class="optb ${j===i?"on":""}" data-sync="pdp" data-i="${j}" onclick="setVariant('pdp',${j})"><i style="background:${x.c}"></i>${esc(vshort(k,j))}</button>`).join("")}</div></div>
-  <div class="kv"><h3>Overview</h3><p>${esc(b.desc)} Pick an option in the video or with the chips above. The page follows either one.</p></div>${FOOT}</div></div>${buyBar(`${k}-${i}`,b.tag)}</div>`;
+  <div class="kv"><h3>Overview</h3><p>${esc(b.desc)}</p></div>${FOOT}</div></div>${buyBar(`${k}-${i}`,b.tag)}</div>`;
 }
 function itemScreen(pid){ const x = P[pid] && P[pid].img ? P[pid] : P.iph;
   return `<div class="screen">${pTop()}<div class="scr" id="scr" style="padding-bottom:16px"><div class="pad-top pad2"></div><div class="pmedia pmi">${pic(x.img,x.n)}</div>
   <div class="pinfo"><span class="bchip">✓ ${esc(x.n.split(" ")[0])}</span><h1>${esc(x.n)}</h1>${x.r?`<div class="rate" style="font-size:13px">${I.star}<b>${x.r}</b> (${x.rc})</div>`:""}<div class="price">${priceHTML(x.p,x.was)}</div>
-  <div class="kv"><h3>Overview</h3><p>${x.sub?esc(x.sub)+". ":""}Listing and price as shown in the noon app on 17 Nov 2026. Full product details are outside this demo.</p></div>${FOOT}</div></div>${buyBar(x.id,x.tag)}</div>`;
+  <div class="kv"><h3>Overview</h3><p>${x.sub?esc(x.sub)+". ":""}${esc(x.n)}.</p></div>${FOOT}</div></div>${buyBar(x.id,x.tag)}</div>`;
 }
 function restScreen(k){ if(!MENUS[k]) k = "bk";
   MENUS[k].forEach((m,j)=>{ P[`${k}-m${j}`] = {id:`${k}-m${j}`, n:`${BRANDS[k].name}: ${m[0]}`, p:m[2], c:BRANDS[k].avc, tag:"fd"}; });
   return `<div class="screen t-food">${pTop()}<div class="scr" id="scr"><div class="pad-top pad2"></div><div data-anchor="rest">${flick("rest",k,{cta:"none"})}</div>
   <div class="pinfo"><h1 style="font-size:21px;font-weight:800;margin-top:10px">${esc(BRANDS[k].name)}</h1><div style="font-size:13px;color:var(--ink2)"><b style="color:var(--ink)">4.4 ★</b> (500+) · ${k==="bk"?"Burgers, Fast food":"Pizza"} · 20-30 mins · AED 4.90 delivery</div>
   <div class="vline" style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--ink2)" data-spop="rest"><span>Sponsored video · showing <b data-sv="rest" style="color:var(--ink)">1 of 3</b></span>${dots("rest")}</div></div>
-  <div class="sec-h" style="margin-top:6px"><h2>Popular</h2></div><div class="sec-sub">Menu items and prices here are illustrative</div>
+  <div class="sec-h" style="margin-top:6px"><h2>Popular</h2></div>
   ${MENUS[k].map((m,j)=>`<div class="menu-i"><div style="flex:1"><b>${m[0]}</b><p>${m[1]}</p><div class="price">${priceHTML(m[2])}</div></div><div style="position:relative;width:40px;height:34px">${addc(`${k}-m${j}`)}</div></div>`).join("")}${FOOT}</div>${nav("")}</div>`;
 }
 const cthumb = x => x.img ? pic(x.img) : swatch(x.c||"#ccc");
-function cartScreen(){ const ids = Object.keys(CART); const tot = ids.reduce((a,id)=>a+P[id].p*CART[id],0);
-  return `<div class="screen"><div class="stop" style="box-shadow:none">${locRow()}</div><div class="scr" id="scr">${!ids.length ? `<div class="empty"><svg width="96" height="96" viewBox="0 0 100 100" style="margin:auto">${GL.basket("#3866df","#8fa9ee")}</svg><h3>Your shopping cart is empty</h3><p>What are you waiting for?</p><button class="cta" onclick="go('#/noon')">Start Shopping</button><p style="margin-top:22px;font-size:12.5px">Use code <b style="color:#2f8f3c">FIRST15</b> and get 15% off</p></div>${sec("Bestsellers for you", row(["iph","s25","pb","hold"]))}`
+function cartList(){ const ids = Object.keys(CART); const tot = ids.reduce((a,id)=>a+P[id].p*CART[id],0);
+  return !ids.length ? `<div class="empty"><svg width="96" height="96" viewBox="0 0 100 100" style="margin:auto">${GL.basket("#3866df","#8fa9ee")}</svg><h3>Your shopping cart is empty</h3><p>What are you waiting for?</p><button class="cta" onclick="go('#/noon')">Start Shopping</button><p style="margin-top:22px;font-size:12.5px">Use code <b style="color:#2f8f3c">FIRST15</b> and get 15% off</p></div>`
    : `<div style="padding:0 14px"><div class="sec-h" style="padding:0;margin-top:14px"><h2>Cart (${cartCount()})</h2></div>${ids.map(id=>`<div class="cart-i"><div class="mi">${cthumb(P[id])}</div><div class="nm">${esc(P[id].n)}<b>AED ${num(P[id].p)}</b></div><div class="step"><button aria-label="Remove one" onclick="addToCart('${id}',-1)">−</button><span>${CART[id]}</span><button aria-label="Add one" onclick="addToCart('${id}',1,1)">+</button></div></div>`).join("")}
-     <div class="tot"><span>Subtotal</span><span>AED ${num(Math.round(tot*100)/100)}</span></div><button class="buy" style="width:100%" onclick="out('Checkout')">Checkout</button></div>`}${FOOT}</div>${nav("cart")}</div>`;
+     <div class="tot"><span>Subtotal</span><span>AED ${num(Math.round(tot*100)/100)}</span></div><button class="buy" style="width:100%" onclick="out('Checkout')">Checkout</button></div>`; }
+function cartScreen(){
+  return `<div class="screen"><div class="stop" style="box-shadow:none">${locRow()}</div><div class="scr" id="scr"><div id="cartlist">${cartList()}</div>
+  ${sec("Add before you check out", `<div class="row">${adTile("cart1","bose","cart1")}${adTile("cart2","dor","cart2")}${tile("pb")}${tile("hold")}</div>`, "", "Sponsored")}
+  ${sec("Bestsellers for you", row(["iph","s25","chg","pb2"]))}</div>${nav("cart")}</div>`;
 }
 function accountScreen(){
   return `<div class="screen acct"><div class="scr" id="scr"><div class="hero2"></div><h2>20M+ products from global brands</h2><p>We bring it to every door, every day.</p>
@@ -416,7 +420,7 @@ function openViewer(k, o={}){ const b = BRANDS[k], v = b.variants[0];
 }
 function openCar(){
   openOver(`<div class="scrim" onclick="closeOver()"></div><div class="sheet" role="dialog" aria-label="Car rentals"><div class="shd"><b>Car Rentals</b><span class="adtag">Ad</span><button onclick="closeOver()" aria-label="Close">${I.x}</button></div>${flick("car","merc",{cta:"rent"})}
-  <div class="sb" data-spop="car"><h3>Introducing car rentals</h3><p>Sponsored · Mercedes-Benz S-Class · showing <b data-sv="car" style="color:var(--ink)">White</b> · <b style="color:var(--ink)">AED 1,200 / day</b> (illustrative rate).</p><button class="cta" style="width:100%;height:46px" onclick="ctaGo('car')">RENT A CAR</button></div></div>`);
+  <div class="sb" data-spop="car"><h3>Introducing car rentals</h3><p>Sponsored · Mercedes-Benz S-Class · showing <b data-sv="car" style="color:var(--ink)">White</b> · <b style="color:var(--ink)">AED 1,200 / day</b>.</p><button class="cta" style="width:100%;height:46px" onclick="ctaGo('car')">RENT A CAR</button></div></div>`);
 }
 
 /* ================= router ================= */
@@ -459,7 +463,7 @@ addEventListener("hashchange", ()=>render(true));
 /* ================= placements guide ================= */
 const GUIDE = [
   ["Swipeable banners", "#e0b400", [["noon home carousel","#/noon","hero"],["supermall featured banners","#/supermall","sm"],["noon Minutes carousel","#/minutes","mban"],["noon Food: In the spotlight","#/food","spot"]]],
-  ["Product Ads in rows", "#3866df", [["noon: Bestsellers row","#/noon","best"],["noon: Grocery row","#/noon","gro"],["supermall: brand row","#/supermall","smrow"],["noon Minutes: product row","#/minutes","mrow"]]],
+  ["Product Ads in rows", "#3866df", [["noon: Bestsellers row","#/noon","best"],["noon: Grocery row","#/noon","gro"],["supermall: brand row","#/supermall","smrow"],["noon Minutes: product row","#/minutes","mrow"],["Cart: add before you check out","#/cart","cart1"]]],
   ["Brand Ad shelves", "#3a2fd0", [["noon home shelf","#/noon","shelf"],["supermall shelf","#/supermall","smshelf"],["noon Minutes shelf","#/minutes","mshelf"]]],
   ["Shoppable video", "#d4006a", [["noon: Watch and shop row","#/noon","w1"],["Watch and shop page","#/watch","wv-zara"],["noon Food: featured videos","#/food","vid",0,()=>openViewer("bk",{cta:"rest",label:"Order now"})]]],
   ["Search", "#2f8f3c", [["Brand Ad at top of search","#/search/earbuds","top"],["Product Ad inside results","#/search/leggings","inline"]]],
@@ -473,7 +477,9 @@ function buildGuide(){ let n = 0;
     return `<button class="gitem ${key===curPick?"cur":""}" onclick="pick(${si},${ii})"><span class="n">${n}</span>${it[0]}</button>`; }).join("")).join("");
   $("#gcount").textContent = n;
 }
-function pick(si, ii){ const it = GUIDE[si][2][ii]; curPick = si+"-"+ii; toggleGuide(false);
+let guideAt = 0;
+function pick(si, ii){ if(Date.now() - guideAt < 500) return;   // the tap that opened the list must not also pick from it
+  const it = GUIDE[si][2][ii]; curPick = si+"-"+ii; toggleGuide(false);
   const have = location.hash || "#/noon", rep = OVSTATE;
   if(have === it[1]){ closeOver(); if(it[2]) scrollToAnchor(it[2]); if(it[4]) setTimeout(it[4], it[2]?520:160); buildGuide(); }
   else { closeOver(true); pendingAnchor = it[2] || null; pendingAct = it[4] || null; if(rep) location.replace(it[1]); else location.hash = it[1]; }
@@ -488,7 +494,7 @@ function scrollToAnchor(a){
   sc.scrollTo({top:Math.max(0,top), behavior:"smooth"});
   setTimeout(()=>{ $$(".pulse").forEach(e=>e.classList.remove("pulse")); void el.offsetWidth; el.classList.add("pulse"); audit(); }, 420);
 }
-function toggleGuide(force){ const p = $("#side"), on = force === undefined ? !p.classList.contains("on") : force; p.classList.toggle("on", on); $("#gscrim").classList.toggle("on", on); $("#gpill").setAttribute("aria-expanded", on); if(on) $("#gpill").classList.remove("hl"); }
+function toggleGuide(force){ const p = $("#side"), on = force === undefined ? !p.classList.contains("on") : force; if(!on && force === false && Date.now() - guideAt < 500 && event && event.type === "click" && event.target && event.target.id === "gscrim") return; if(on) guideAt = Date.now(); p.classList.toggle("on", on); $("#gscrim").classList.toggle("on", on); $("#gpill").setAttribute("aria-expanded", on); if(on) $("#gpill").classList.remove("hl"); }
 document.addEventListener("keydown", e=>{ if(e.key === "Escape"){ toggleGuide(false); closeOver(); } if((e.key==="Enter"||e.key===" ") && e.target.matches && e.target.matches("[role=button]")){ e.preventDefault(); e.target.click(); } });
 // The phone button can be dragged out of the way; a short move still counts as a tap.
 (function(){ const b = $("#gpill"); let sx, sy, ox, oy, moved;

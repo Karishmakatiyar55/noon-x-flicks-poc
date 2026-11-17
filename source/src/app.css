@@ -393,7 +393,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:ra
 .side p{color:var(--f-2);font-size:14px}
 .side .disc{color:var(--f-dim)}
 .glist{background:rgba(242,196,179,.045);border:1px solid rgba(242,196,179,.18);border-radius:20px;box-shadow:none;padding:8px;scrollbar-color:rgba(242,196,179,.3) transparent}
-.glist h6{color:var(--f-mute);font-weight:600;letter-spacing:.16em;margin:12px 10px 4px}
+.glist h6{color:var(--f-acc);font-weight:700;font-size:11.5px;letter-spacing:.14em;margin:14px 6px 6px;padding:7px 10px;border-radius:10px;background:rgba(242,196,179,.12);border:1px solid rgba(242,196,179,.22)}
+.glist h6:first-child{margin-top:4px}
 .glist h6 i{display:none}
 .gitem{color:var(--f-text);font-size:13.5px;border-radius:12px}
 .gitem:hover{background:rgba(242,196,179,.08)}
@@ -405,11 +406,14 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:ra
 @media (max-width:860px){
   body{background:#fff}body::before{display:none}
   .fhdr{display:none}.page{padding-top:0}
-  .side{background:var(--f-card);border:1px solid rgba(242,196,179,.22);max-height:70vh;width:auto}
-  .side h1{font-size:22px}
-  .glist{border:0;background:none;padding:0}
-  .gpill{font-family:var(--f-font);background:linear-gradient(#FBEFE9 0%,#F2C4B3 70%,#D9937C 100%);color:#1A1210;font-weight:600}
-  .gpill i{background:#1A1210;color:var(--f-acc)}
-  .gpill.hl{animation-name:hlf}
-  @keyframes hlf{50%{box-shadow:0 0 0 6px rgba(242,196,179,.5),0 10px 24px -8px rgba(0,0,0,.6);transform:scale(1.06)}}
+  .side{font-family:var(--font);background:#fff;max-height:70vh;width:auto}
+  .side .kick{color:#6a5cff;letter-spacing:.14em;font-weight:800;font-size:11.5px}
+  .side h1{font-size:19px;font-weight:800;letter-spacing:-.4px;line-height:1.12;margin:8px 0 8px;background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#1c1e26}
+  .glist{border:0;background:none;padding:0;scrollbar-color:auto}
+  .glist h6{display:flex;color:#1c1e26;background:#f3f4f8;border:0;font-weight:800;font-size:11px;letter-spacing:.08em;margin:12px 0 4px;padding:8px 10px;border-radius:10px}
+  .glist h6 i{display:block;width:9px;height:9px}
+  .gitem{color:#1c1e26;font-size:13px;border-radius:9px}
+  .gitem:hover{background:#f3f4f8}
+  .gitem.cur{background:#eeecff;color:#3a2fd0;font-weight:700}
+  .gitem .n{color:#9aa0b0}
 }

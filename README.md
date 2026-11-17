@@ -11,7 +11,8 @@ The on-page list groups them by slot type (swipeable banners, Product Ads in row
 - noon: home carousel with three Flicks between the static banners, the first banner being a Flick (Bose, Gap, Patagonia); Product Ads in Bestsellers (Sony) and Grocery must haves (General Mills); a display card between offer cards (Cross); a Watch and shop video row (Zara, Acer, M&M's); Brand Ad shelf (LEGO); Brand Ads at top of search (Bose, Sony); Product Ad inside results (Nike); category banners (LEGO, Levi's and others); product page media; app-open interstitial (Acer)
 - supermall: featured banners (Nike, Gap), Product Ads in rows (Levi's, Bose), Brand Ad shelf (Sony)
 - noon Food: In the spotlight (Little Caesars, Burger King), featured videos (Burger King, Little Caesars), an ad inside the restaurant list (Ben & Jerry's), restaurant page (Burger King)
-- noon Minutes: banner carousel with three Flicks (General Mills, Doritos, Ben & Jerry's), Product Ads in rows (General Mills, Ben & Jerry's), sponsored shelf (Doritos), display card (M&M's)
+- Cart: a sponsored "Add before you check out" row with two Flicks (Bose, Doritos)
+- noon Minutes: banner carousel with three Flicks (Ben & Jerry's, Doritos, General Mills), Product Ads in rows (General Mills, Ben & Jerry's), sponsored shelf (Doritos), display card (M&M's)
 - NowNow: Pet Care (BARK), rent a car ads (Cadillac, Bentley), Lifestyle gifts (Cross), car rentals takeover (Mercedes-Benz)
 
 At most four Flick players are kept running at once (those nearest the screen); others load as they come into view.
@@ -27,7 +28,7 @@ The Watch and shop row on the noon home page opens a page of shoppable videos (`
 - Sound: a Flick can only be heard while at least half of it is on screen. Scrolling it away, swiping a carousel, opening a sheet, switching the browser tab or leaving the screen silences it; leaving a screen removes its Flicks.
 - A Flick that fails to load says so and offers Retry.
 
-## Honesty notes
+## Notes (kept here only; the page itself carries no notes, at the owner's request)
 
 Concept demo built by Flam for partner conversations. Not affiliated with or endorsed by noon or the brands shown.
 
