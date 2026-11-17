@@ -42,6 +42,23 @@ const BRANDS = {
     head:"Which pint tonight?", prod:"Ben & Jerry's Ice Cream Pint 473ml,", r:4.8, rc:"3.2K",
     desc:"Ice cream with big chunks and swirls, made with Fairtrade ingredients.",
     variants:[{n:"Cherry Garcia",c:"#c2325b",p:34.95,was:39.5},{n:"Razz Up!",c:"#d6497f",p:34.95,was:39.5},{n:"Chunky Monkey",c:"#e2b93b",p:34.95,was:39.5}] },
+  gap:{ name:"Gap", av:"GAP", avc:"#0b2a5b", src:T1+"mti1bs/ad.js", dsp:"dv360", unit:"Style", named:true, retail:true, tag:"sm",
+    head:"Three fall layers", prod:"Gap", r:4.5, rc:"640", desc:"Easy layers for cooler days. Switch the look in the video, then shop the piece you picked.",
+    variants:[{n:"Denim Relaxed Shirt",c:"#5f7fa8",p:229,was:279},{n:"Icon Corduroy Jacket",c:"#7a5338",p:349,was:429},{n:"CashSoft Crew Sweater",c:"#b3261e",p:249,was:299}] },
+  pata:{ name:"Patagonia", av:"P", avc:"#2d3a4a", src:T1+"6a91088b3252dba34b486df1_q18dy8/ad.js", unit:"Colour", named:true, retail:true, tag:"ex",
+    head:"Made for the moment", prod:"Patagonia Men's Jacket,", r:4.7, rc:"210", desc:"A trail-ready jacket built to last. Pick a colour and see it outdoors before you buy.",
+    variants:[{n:"Green",c:"#6f8a5b",p:899,was:1049},{n:"Brown",c:"#7a5338",p:899,was:1049},{n:"Teal",c:"#2b7f86",p:899,was:1049}] },
+  zara:{ name:"Zara", av:"ZARA", avc:"#000", src:T1+"zara/ad.js", unit:"Style", named:true, retail:true, tall:true, tag:"ex",
+    head:"Bomber season", prod:"Zara", r:4.4, rc:"180", desc:"Three bomber jackets, one look. Switch jackets inside the video.",
+    variants:[{n:"Checked bomber jacket",c:"#8a8f7a",p:399,was:459},{n:"Plaid bomber jacket",c:"#5a4a3c",p:399,was:459},{n:"Polka dot bomber jacket",c:"#23252b",p:379,was:459}] },
+  mms:{ name:"M&M's", av:"m&m", avc:"#6b3f1d", src:T1+"6a8e82a03252dba34b484fa9_xvaz4d/ad.js", unit:"Pick", named:false,
+    head:"Pick your favourite", variants:[{n:"Option 1",c:"#d8232a"},{n:"Option 2",c:"#f2b632"},{n:"Option 3",c:"#2f8f3c"}] },
+  cross:{ name:"Cross", av:"C", avc:"#3a2c22", src:T1+"6a9915fffac7a1784444e730_c3pgst/ad.js", unit:"Finish", named:false,
+    head:"A pen worth gifting", variants:[{n:"Finish 1",c:"#23252b"},{n:"Finish 2",c:"#b08d57"},{n:"Finish 3",c:"#8fa3a8"}] },
+  cad:{ name:"Cadillac", av:"CAD", avc:"#1a1a1a", src:"https://flicks.flamapp.live/z70k1k/ad.js", dsp:"dv360", unit:"Model", named:true, dark:true,
+    head:"One drive, three Cadillacs", variants:[{n:"Optiq",c:"#c0392b"},{n:"Celestiq",c:"#26407a"},{n:"Escalade-V",c:"#e9e9e9"}] },
+  bentley:{ name:"Bentley", av:"B", avc:"#24452f", src:T2+"6a9bc07393e71f3ec9b12c81_xogy7s/ad.js", unit:"Paint", named:true, fontScan:true, transparent:true,
+    head:"Beyond the ordinary", variants:[{n:"White",c:"#ecebe6"},{n:"Olive",c:"#9a9d3c"},{n:"Blue",c:"#1f4fa3"}] },
   bk:{ name:"Burger King", av:"BK", avc:"#d62300", src:"https://flicks.flamapp.live/dzvxyq/ad.js", dsp:"house", g:"burger", unit:"Pick", named:false,
     head:"Flame-grilled. Your way.", variants:[{n:"Option 1",c:"#e8a33d"},{n:"Option 2",c:"#d9822b"},{n:"Option 3",c:"#c9652a"}] },
   lc:{ name:"Little Caesars", av:"LC", avc:"#f26522", src:T1+"xlgqpx/ad.js", dsp:"dv360", g:"pizza", unit:"Pick", named:false,
@@ -130,7 +147,7 @@ prod("bar3","Barakat x Kiri Tropical Cheesecake Pop",12,null,0,"","grocery","mn"
 // The Flick products themselves: one listing per option in each retail Flick (no photo: the Flick is the picture).
 Object.keys(BRANDS).forEach(k=>{ const b=BRANDS[k]; if(!b.retail) return;
   b.variants.forEach((v,i)=>{ P[`${k}-${i}`]={id:`${k}-${i}`,brand:k,vi:i,n:vname(k,i),p:v.p,was:v.was,r:b.r,rc:b.rc,c:v.c,tag:b.tag,cat:"flick"}; }); });
-function vname(k,i){ const b=BRANDS[k], v=b.variants[i]; return k==="bose"||k==="sony"||k==="nike" ? `${b.prod}, ${v.n}` : `${b.prod} ${v.n}`; }
+function vname(k,i){ const b=BRANDS[k], v=b.variants[i]; return k==="bose"||k==="sony"||k==="nike"||k==="pata" ? `${b.prod}, ${v.n}` : `${b.prod} ${v.n}`; }
 const vshort = (k,i) => BRANDS[k].variants[i].short || BRANDS[k].variants[i].n;
 
 const CATS = { mobiles:["Mobiles & Accessories","bose"], electronics:["Electronics","sony"], laptops:["Laptops & Accessories",null], beauty:["Beauty",null], grocery:["Grocery","gm"],

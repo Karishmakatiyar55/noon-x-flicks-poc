@@ -79,14 +79,16 @@ t({type:"boot"});})();`;
   const cfg = !b.dsp ? "" : b.dsp === "house"
     ? `<script>window.AD_CONFIG=window.AD_CONFIG||{};window.AD_CONFIG.dsp="house";window.AD_CONFIG.clickTracker={"mode":"exit","template":""};<\/script>`
     : `<script>window.AD_CONFIG=window.AD_CONFIG||{};window.AD_CONFIG.dsp="dv360_studio";window.AD_CONFIG.publisherInfo={"publisher_id":"\${PUBLISHER_ID}","adsxt_publisher_id":"\${ADSXT_PUBLISHER_ID}","universal_site_id":"\${UNIVERSAL_SITE_ID}","source_url":"\${SOURCE_URL}","source_url_enc":"\${SOURCE_URL_ENC}","adsxt_ad_system_domain":"\${ADSXT_AD_SYSTEM_DOMAIN}"};window.AD_CONFIG.clickTracker={"mode":"exit","template":""};<\/script>`;
+  const fonts = b.fontScan ? `<script>(function(){var seen={},head=document.head||document.documentElement,until=Date.now()+3e4;function add(css){if(seen[css])return;seen[css]=1;var s=document.createElement("style");s.setAttribute("data-vertex-fonts","");s.textContent=css;head.appendChild(s)}function scan(){try{var ps=document.getElementsByTagName("vertex-player");for(var i=0;i<ps.length;i++){var r=ps[i].shadowRoot;if(!r)continue;var n=r.querySelectorAll("style,link[rel=stylesheet]");for(var j=0;j<n.length;j++){var el=n[j];if(el.tagName==="LINK"){if(/fonts\\.googleapis\\.com/.test(el.href)&&!seen[el.href]){seen[el.href]=1;var l=document.createElement("link");l.rel="stylesheet";l.href=el.href;head.appendChild(l)}continue}var m=(el.textContent||"").match(/@font-face\\s*\\{[^}]*\\}/g);if(m)add(m.join(""))}}}catch(e){}if(Date.now()<until)setTimeout(scan,250)}scan()})();<\/script>` : "";
   const src = /^[\w-]+:\/\/[^"'<>\s]+$/.test(b.src) ? b.src : "";
   return `<!doctype html>
 <meta charset=utf-8>
 <meta name=ad.orientation content=portrait,landscape>
-<style>html,body{margin:0;height:100%;background:${b.dark?"#141518":"#eceef3"};overflow:hidden}</style>
+<style>html,body{margin:0;height:100%;background:${b.transparent?"transparent":b.dark?"#141518":"#eceef3"};overflow:hidden}</style>
 <script>${bridge}<\/script>
 <script>var ExitApi=window.ExitApi||{exit:function(){}},clickTag="\${CLICK_URL_UNESC}";<\/script>
 ${cfg}
+${fonts}
 <script src="${src}"><\/script>`;
 }
 
@@ -146,7 +148,7 @@ function ctaGo(id){ const s = SLOTS[id]; if(!s) return; const b = BRANDS[s.brand
   if(s.cta==="pdp") go(`#/p/${s.brand}/${s.v}`);
   else if(s.cta==="add") addToCart(`${s.brand}-${s.v}`);
   else if(s.cta==="rest") go(`#/rest/${s.brand}`);
-  else if(s.cta==="rent") toast(`Request noted: S-Class in ${b.variants[s.v].n}. Booking is outside this demo`);
+  else if(s.cta==="rent") toast(`Request noted: ${b.name} ${b.unit==="Model"?"":"in "}${b.variants[s.v].n}. Booking is outside this demo`);
   else if(s.cta==="store") toast(`${b.name} store pages are outside this demo`);
 }
 function pickOrOpen(id, i){ const s = SLOTS[id]; if(!s) return; if(s.v===i && BRANDS[s.brand].retail) go(`#/p/${s.brand}/${i}`); else setVariant(id, i); }
@@ -179,11 +181,12 @@ function vis(h){
   return {ratio: Math.max(0,x2-x1)*Math.max(0,y2-y1)/a, dist};
 }
 function audit(){
-  const ov = OVER.classList.contains("on"); let best=null, bestR=0; const list=[];
+  const ov = OVER.classList.contains("on"); let best=null, bestR=0; const list=[], cand=[];
   $$(".flick[data-slot]", APP).forEach(h=>{ const s = SLOTS[h.dataset.slot]; if(!s) return; const {ratio,dist} = vis(h); const over = !!h.closest("#over");
-    if(dist < 420) mount(h); else if(dist > 760) unmount(h);
+    cand.push([dist - ratio*1000 - (over?5000:0), h, dist, ratio]);
     const ok = ratio >= .5 && !document.hidden && (!ov || over);
     list.push([h,s]); if(ok && ratio + (over?1:0) > bestR){ bestR = ratio + (over?1:0); best = s; } });
+  cand.sort((a,b)=>a[0]-b[0]).forEach(([_,h,dist,ratio],i)=>{ if(dist < 420 && (i < 4 || ratio > 0)) mount(h); else if(dist > 760 || (i >= 4 && ratio === 0)) unmount(h); });
   list.forEach(([h,s])=>{ if(!s.mounted) return; const mute = s !== best; if(s.muted === mute) return; s.muted = mute; try{ frameWin(h).postMessage({flamCmd:"mute", on:mute}, "*"); }catch(e){} });
 }
 let auditT=0; const sched = () => { if(auditT) return; auditT = setTimeout(()=>{ auditT=0; audit(); }, 90); };
@@ -226,6 +229,11 @@ function adCard(id, k, anchor, o={}){ const b = BRANDS[k], v = b.variants[0];
   <div class="adb" data-spop="${id}"><div><div class="br">${av(k)}${esc(b.name)}</div><h4 style="margin-top:6px">${esc(o.head||b.head)}</h4></div>
   <div class="vline"><span><b data-sv="${id}">${b.named?esc(vshort(k,0)):"1 of 3"}</b>${v.p?` · <span class="price" style="display:inline-flex;font-size:13px" data-sp="${id}">${priceHTML(v.p,v.was)}</span>`:""}</span>${dots(id)}</div>
   <button class="cta ${o.ccls||""}" onclick="ctaGo('${id}')">${o.label||"Order Now"} ${I.right}</button></div></div>`; }
+// Video card: a 9:16 Flick in a "watch and shop" row.
+function tallCard(id, k, anchor){ const b = BRANDS[k], v = b.variants[0];
+  return `<div class="adcard" data-anchor="${anchor}" style="width:214px;flex:none"><span class="adtag">Ad</span>${flick(id,k)}
+  <div class="adb" data-spop="${id}"><div class="br">${av(k)}${esc(b.name)} ${dots(id)}</div><div class="vline"><b data-sv="${id}" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(vshort(k,0))}</b></div><div class="price" style="font-size:13px" data-sp="${id}">${priceHTML(v.p,v.was)}</div>
+  <button class="cta" onclick="ctaGo('${id}')">Shop now ${I.right}</button></div></div>`; }
 const mini = (id,k,i) => { const v = BRANDS[k].variants[i]; return `<div class="mini ${i?"":"on"}" data-sync="${id}" data-i="${i}" onclick="pickOrOpen('${id}',${i})" role="button" tabindex="0"><span class="nm"><i class="sw" style="background:${v.c}"></i>${esc(vshort(k,i))}</span><b class="price" style="font-size:12.5px">${priceHTML(v.p)}</b>${addc(`${k}-${i}`)}</div>`; };
 const minis = (id,k) => `<div class="prow">${BRANDS[k].variants.map((_,i)=>mini(id,k,i)).join("")}</div>`;
 // Brand Ad shelf: a brand's block on a home page, video on top and its three products under it.
@@ -241,16 +249,17 @@ const hdr = (v, inner) => `<header class="hdr">${tabsHTML(v)}${inner}</header>`;
 let VERT = "noon";
 function noonScreen(){
   return `<div class="screen">${hdr("noon", locRow()+sbox('Search "iPhone 18 pro"'))}<div class="scr" id="scr">
-  <div class="hero">${icard("h_yf",284)}${adCard("hero","bose","hero",{cls:"hcard",style:"width:284px;height:auto;min-height:424px"})}${icard("h_huawei",284)}${icard("h_yango",284)}${icard("h_lego",284)}</div>
+  <div class="hero" style="align-items:flex-start">${adCard("hero","bose","hero",{cls:"hcard",style:"width:284px;height:auto;min-height:424px"})}${icard("h_yf",284)}${adCard("hero2","gap","hero2",{cls:"hcard",style:"width:284px;height:auto;min-height:424px",label:"Shop now"})}${icard("h_huawei",284)}${adCard("hero3","pata","hero3",{cls:"hcard",style:"width:284px;height:auto;min-height:424px",label:"Shop now"})}${icard("h_yango",284)}${icard("h_lego",284)}</div>
   ${bimg("b_oralb")}
   ${slice("s_cats","",[4,2,["go('#/cats')","go('#/cat/electronics')","go('#/cat/laptops')","out('Gift Cards')","out('The credit card offer')","go('#/cat/mobiles')","go('#/cat/beauty')","go('#/cat/wfashion')"]])}
   ${bimg("b_philips")}
   ${sec("Offers for you", slice("s_coupons","toast('Offer codes are not active in this demo')"))}
   ${sec("Bestsellers for you", `<div class="row">${tile("iph")}${adTile("best","sony","best")}${tile("s25")}</div>`)}
-  <div class="row" style="padding-top:8px">${icard("a_eucerin",160)}${icard("a_tv",160)}</div>
+  <div class="row" style="padding-top:8px;align-items:flex-start">${icard("a_eucerin",160)}${adCard("crd1","cross","crd1",{style:"width:236px",cta:"store",label:"Shop now"})}${icard("a_tv",160)}</div>
+  ${sec("Watch and shop", `<div class="row" style="align-items:flex-start">${tallCard("w1","zara","w1")}${tallCard("w2","acer","w2")}${adCard("w3","mms","w3",{style:"width:236px",cta:"store",label:"Order Now"})}</div>`, "", "Sponsored videos · tap an option inside the video")}
   ${shelf("shelf","lego","shelf","#1552d6","Three cars.<br>One starting grid.","Brand Ad")}
   <section style="background:#0b5bd8;padding-bottom:14px;margin-top:14px">${slice("b_hotwheels","go('#/cat/toys')")}<div class="row">${["hw1","hw2","hw4","hw5"].map(tile).join("")}</div><button class="all" style="display:flex;justify-content:center;align-items:center;gap:6px;margin:10px 14px 0;height:42px;border-radius:10px;background:#fff;font-weight:700;width:calc(100% - 28px)" onclick="go('#/cat/toys')">View All ${I.right}</button></section>
-  ${sec("Grocery must haves", row(["vos","tis","wat","mlk"]), "go('#/minutes')")}
+  ${sec("Grocery must haves", `<div class="row">${tile("vos")}${adTile("gro","gm","gro")}${tile("tis")}${tile("wat")}${tile("mlk")}</div>`, "go('#/minutes')")}
   ${FOOT}</div>${nav("home")}</div>`;
 }
 function supermallScreen(){
@@ -259,31 +268,36 @@ function supermallScreen(){
   ${slice("s_smrow1","out('This collection')")}${slice("s_smrow2","go('#/cats')")}
   ${sec("Featured this Week", slice("s_smfeat","out('This offer')"))}
   ${bimg("b_vat")}
-  <div class="row" style="padding-top:10px;align-items:flex-start">${adCard("sm","nike","sm",{style:"width:300px",label:"Shop now",ccls:"acc"})}${icard("a_aromatic",300)}</div>
+  <div class="row" style="padding-top:10px;align-items:flex-start">${adCard("sm","nike","sm",{style:"width:300px",label:"Shop now",ccls:"acc"})}${icard("a_aromatic",300)}${adCard("sm2","gap","sm2",{style:"width:300px",label:"Shop now",ccls:"acc"})}</div>
   ${sec("Lowest prices on top brands", `<div class="row">${tile("hold")}${adTile("smrow","levis","smrow")}${tile("chg")}</div>`, "go('#/cat/mobiles')")}
   ${bimg("b_yffood","go('#/food')")}
-  ${sec("Top selling mobile accessories", row(["pb","pb2","hold","chg"]), "go('#/cat/mobiles')")}
+  ${sec("Top selling mobile accessories", `<div class="row">${tile("pb")}${adTile("smacc","bose","smacc")}${tile("pb2")}${tile("hold")}${tile("chg")}</div>`, "go('#/cat/mobiles')")}
+  ${shelf("smshelf","sony","smshelf","#3a2fd0","All-day noise cancelling.<br>Pick your colour.","Delivered in 90 mins")}
   ${FOOT}</div>${nav("home")}</div>`;
 }
+const spotI = r => `<button class="spot" onclick="out('${r[1]}')"><div class="si">${pic(r[0],r[1])}</div><b>${r[1]}</b><span>${r[2]} ★ · ${r[3]}</span></button>`;
+const restI = r => `<button class="rest" onclick="out('${r[1].replace("'","")}')"><div class="ri">${pic(r[0],r[1])}</div><div><b>${r[1]}</b><div class="m">${r[2]} ★ (500+) · AED ${r[3]}</div><div class="m" style="color:#2f8f3c">${r[4]}</div><div class="o">${r[5]}</div></div></button>`;
 function foodScreen(){
   return `<div class="screen t-food">${hdr("food", locRow()+`<button class="sbox" onclick="out('Restaurant search')">${I.search}<span>Search restaurants</span></button>`)}<div class="scr" id="scr">
   ${slice("s_fdeals","out('This deal')")}${slice("s_fcui","out('Cuisine pages')")}${slice("s_foffers","out('This restaurant')")}
   ${sec("In the spotlight", `<div class="row" style="align-items:flex-start">${adCard("spot","lc","spot",{style:"width:262px",cta:"rest",label:"Order now",ccls:"acc",head:"Little Caesars · Pizza · 25-35 mins"})}
-    ${[["r_spot1","ALBAIK - Dubai Mall","4.5","35-45 mins"],["r_spot2","Taqado Mexican Kitchen","4.6","25-35 mins"]].map(r=>`<button class="spot" onclick="out('${r[1]}')"><div class="si">${pic(r[0],r[1])}</div><b>${r[1]}</b><span>${r[2]} ★ · ${r[3]}</span></button>`).join("")}</div>`)}
+    ${spotI(["r_spot1","ALBAIK - Dubai Mall","4.5","35-45 mins"])}${adCard("spot2","bk","spot2",{style:"width:262px",cta:"rest",label:"Order now",ccls:"acc",head:"Burger King · Burgers · 20-30 mins"})}${spotI(["r_spot2","Taqado Mexican Kitchen","4.6","25-35 mins"])}</div>`)}
   ${slice("s_frush","toast('Alerts are not part of this demo')")}
   ${sec("Watch featured videos", `<div class="row">
     <button class="vid" data-anchor="vid" style="background:linear-gradient(170deg,#3a1206,#d62300)" onclick="openViewer('bk',{cta:'rest',label:'Order now'})" aria-label="Burger King featured video"><span class="adtag">Ad</span><span class="off">Interactive video</span><span class="play">${I.play}</span><b>Burger King</b><span>4.4 ★ · 20-30 mins</span></button>
-    ${["v_right","v_sweets"].map(k=>icard(k,145,"toast('Restaurant videos are stills in this demo')")).join("")}</div>`)}
+    ${icard("v_right",145,"toast('Restaurant videos are stills in this demo')")}
+    <button class="vid" data-anchor="vid2" style="background:linear-gradient(170deg,#5a2206,#f26522)" onclick="openViewer('lc',{cta:'rest',label:'Order now'})" aria-label="Little Caesars featured video"><span class="adtag">Ad</span><span class="off">Interactive video</span><span class="play">${I.play}</span><b>Little Caesars</b><span>4.3 ★ · 25-35 mins</span></button>
+    ${icard("v_sweets",145,"toast('Restaurant videos are stills in this demo')")}</div>`)}
   ${sec("Restaurants near you", `<div class="chips" style="padding-top:0"><span class="chip">${I.filter}</span><span class="chip">Sort by ${I.chev}</span><span class="chip">Cuisines ${I.chev}</span><span class="chip">Rating 4.0+</span></div>
-    ${RESTS.map(r=>`<button class="rest" onclick="out('${r[1].replace("'","")}')"><div class="ri">${pic(r[0],r[1])}</div><div><b>${r[1]}</b><div class="m">${r[2]} ★ (500+) · AED ${r[3]}</div><div class="m" style="color:#2f8f3c">${r[4]}</div><div class="o">${r[5]}</div></div></button>`).join("")}`)}
+    ${RESTS.slice(0,3).map(restI).join("")}<div class="wide" style="margin:12px 14px">${adCard("fdes","bj","fdes",{label:"Add dessert",ccls:"acc",head:"Dessert with your order, from noon Minutes"})}</div>${RESTS.slice(3).map(restI).join("")}`)}
   ${FOOT}</div>${nav("home")}</div>`;
 }
 function minutesScreen(){
   return `<div class="screen t-minutes">${hdr("minutes", `<div class="srow">${sbox("Search")}<button class="magic" onclick="out('Magic List')">Shop with<b>Magic List</b></button></div>
     <div style="margin:10px 0 -10px">${slice("s_mchips","out('Other Minutes departments')")}</div>`)}<div class="scr" id="scr">
   ${slice("s_mwelcome","toast('Offer codes are not active in this demo')")}${bimg("b_gta")}
-  <div class="row" style="padding-top:8px">${["wat","mlk","brd"].map(tile).join("")}</div>
-  <div class="hero" style="padding-top:12px;align-items:flex-start">${adCard("mban","gm","mban",{cls:"hcard",style:"width:300px;height:auto",label:"Order Now",ccls:"acc"})}${icard("h_gatorade",300)}${icard("h_pasta",300)}${icard("h_tummies",300)}</div>
+  <div class="row" style="padding-top:8px">${tile("wat")}${adTile("mrow","gm","mrow")}${tile("mlk")}${tile("brd")}</div>
+  <div class="hero" style="padding-top:12px;align-items:flex-start">${adCard("mban","gm","mban",{cls:"hcard",style:"width:300px;height:auto",label:"Order Now",ccls:"acc"})}${icard("h_gatorade",300)}${adCard("mban2","dor","mban2",{cls:"hcard",style:"width:300px;height:auto",label:"Order Now",ccls:"acc"})}${icard("h_pasta",300)}${adCard("mban3","bj","mban3",{cls:"hcard",style:"width:300px;height:auto",label:"Order Now",ccls:"acc"})}${icard("h_tummies",300)}</div>
   ${slice("s_mcat","out('Minutes categories')")}
   ${slice("s_moffers","toast('Offer codes are not active in this demo')")}
   ${sec("Fruits & Vegetables", row(["org","cuc","pine"]), "out('Fruits & Vegetables')", "Delivered in 15 mins!")}
@@ -291,6 +305,7 @@ function minutesScreen(){
   ${sec("Ice cream & frozen treats", `<div class="row">${adTile("mice","bj","mice")}${tile("bar1")}${tile("bar2")}${tile("bar3")}</div>`, "out('Ice cream')", "Delivered in 15 mins!")}
   ${sec("Snacks", row(["lay1","lay2","lay3"]), "", "Delivered in 15 mins!")}
   ${sec("Make the leap with PUMA", row(["puma1","puma2"]), "", "Delivered in 15 mins!")}
+  ${sec("Sweet treats", `<div class="wide">${adCard("msw","mms","msw",{cta:"store",label:"Order Now",ccls:"acc"})}</div>`, "", "Sponsored · Delivered in 15 mins")}
   ${slice("s_mfinds","out('Minutes unique finds')")}
   ${FOOT}</div>${nav("home")}</div>`;
 }
@@ -302,7 +317,9 @@ function nownowScreen(){
   ${slice("b_enbd","out('The credit card offer')")}
   ${slice("s_nrent","openCar()",null,"car")}
   <div class="wide"><button class="cta acc" style="width:100%;margin:2px 0 10px" onclick="openCar()">Car rentals: see the interactive ad ${I.right}</button></div>
+  <div class="row" style="align-items:flex-start">${adCard("car2","cad","car2",{style:"width:280px",cta:"rent",label:"RENT A CAR"})}${adCard("car3","bentley","car3",{style:"width:280px",cta:"rent",label:"RENT A CAR"})}</div>
   ${bimg("b_wash","out('noon wash')")}${slice("s_nflu","out('This store')")}
+  ${sec("Gifts, delivered today", `<div class="wide">${adCard("ngift","cross","ngift",{cta:"store",label:"Shop gifts",ccls:"acc"})}</div>`, "", "Sponsored · Lifestyle")}
   ${FOOT}</div>${nav("home")}</div>`;
 }
 function searchScreen(q){
@@ -421,13 +438,15 @@ addEventListener("hashchange", ()=>render(true));
 
 /* ================= placements guide ================= */
 const GUIDE = [
-  ["noon", "#e0b400", [["Display Ad in the home carousel","#/noon","hero","Bose"],["Product Ad in Bestsellers","#/noon","best","Sony"],["Brand Ad shelf","#/noon","shelf","LEGO"],
+  ["noon", "#e0b400", [["Home carousel, first banner","#/noon","hero","Bose"],["Home carousel, banner 3","#/noon","hero2","Gap"],["Home carousel, banner 5","#/noon","hero3","Patagonia"],
+    ["Product Ad in Bestsellers","#/noon","best","Sony"],["Display card between offers","#/noon","crd1","Cross"],["Watch and shop video","#/noon","w1","Zara"],["Watch and shop video","#/noon","w2","Acer"],["Watch and shop card","#/noon","w3","M&M's"],
+    ["Brand Ad shelf","#/noon","shelf","LEGO"],["Product Ad in Grocery must haves","#/noon","gro","General Mills"],
     ["Brand Ad, top of search","#/search/earbuds","top","Bose"],["Brand Ad, top of search","#/search/headphones","top","Sony"],["Product Ad inside results","#/search/leggings","inline","Nike"],
     ["Category banner: Toys","#/cat/toys","catb","LEGO"],["Category banner: Women's Fashion","#/cat/wfashion","catb","Levi's"],["Product page media","#/p/bose/0","pdp","Bose"],["App-open interstitial","#/noon","", "Acer", ()=>openViewer("acer",{label:"Shop now",sub:"closes any time"})]]],
-  ["supermall", "#3a2fd0", [["Featured this week","#/supermall","sm","Nike"],["Product Ad in a brand row","#/supermall","smrow","Levi's"]]],
-  ["noon Food", "#d4006a", [["In the spotlight","#/food","spot","Little Caesars"],["Featured video","#/food","vid","Burger King", ()=>openViewer("bk",{cta:"rest",label:"Order now"})],["Restaurant page","#/rest/bk","rest","Burger King"]]],
-  ["noon Minutes", "#c4102b", [["Banner carousel","#/minutes","mban","General Mills"],["Sponsored shelf","#/minutes","mshelf","Doritos"],["Product Ad in a category row","#/minutes","mice","Ben & Jerry's"]]],
-  ["NowNow", "#e2402a", [["Department ad: Pet Care","#/nownow","pet","BARK"],["Car rentals takeover","#/nownow","car","Mercedes-Benz", ()=>openCar()]]]
+  ["supermall", "#3a2fd0", [["Featured banner","#/supermall","sm","Nike"],["Featured banner","#/supermall","sm2","Gap"],["Product Ad in a brand row","#/supermall","smrow","Levi's"],["Product Ad in mobile accessories","#/supermall","smacc","Bose"],["Brand Ad shelf","#/supermall","smshelf","Sony"]]],
+  ["noon Food", "#d4006a", [["In the spotlight","#/food","spot","Little Caesars"],["In the spotlight","#/food","spot2","Burger King"],["Featured video","#/food","vid","Burger King", ()=>openViewer("bk",{cta:"rest",label:"Order now"})],["Featured video","#/food","vid2","Little Caesars", ()=>openViewer("lc",{cta:"rest",label:"Order now"})],["Ad inside the restaurant list","#/food","fdes","Ben & Jerry's"],["Restaurant page","#/rest/bk","rest","Burger King"]]],
+  ["noon Minutes", "#c4102b", [["Product Ad in the first row","#/minutes","mrow","General Mills"],["Banner carousel, first banner","#/minutes","mban","General Mills"],["Banner carousel, banner 3","#/minutes","mban2","Doritos"],["Banner carousel, banner 5","#/minutes","mban3","Ben & Jerry's"],["Sponsored shelf","#/minutes","mshelf","Doritos"],["Product Ad in a category row","#/minutes","mice","Ben & Jerry's"],["Display card","#/minutes","msw","M&M's"]]],
+  ["NowNow", "#e2402a", [["Department ad: Pet Care","#/nownow","pet","BARK"],["Rent a car ad","#/nownow","car2","Cadillac"],["Rent a car ad","#/nownow","car3","Bentley"],["Department ad: Lifestyle gifts","#/nownow","ngift","Cross"],["Car rentals takeover","#/nownow","car","Mercedes-Benz", ()=>openCar()]]]
 ];
 let curPick = "";
 function buildGuide(){ let n = 0;

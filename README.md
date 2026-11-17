@@ -4,13 +4,15 @@ A clickable concept of Flam Flicks (interactive video ads) placed inside the noo
 
 Open `index.html` in Chrome or Safari, or host the single file anywhere static (GitHub Pages, Vercel). On a laptop it shows a phone frame with the list of placements beside it; on a phone it fills the screen and the "Ad placements" button opens the list.
 
-## Placements (20)
+## Placements (40 entries in the placements list, across the five verticals)
 
-- noon: Display Ad in the home carousel (Bose), Product Ad in Bestsellers (Sony), Brand Ad shelf (LEGO), Brand Ad at top of search (Bose, Sony), Product Ad inside results (Nike), category banners (LEGO, Levi's, also Bose, Sony, Nike, General Mills on their categories), product page media (Bose), app-open interstitial (Acer)
-- supermall: Featured this week (Nike), Product Ad in a brand row (Levi's)
-- noon Food: In the spotlight (Little Caesars), featured video (Burger King), restaurant page (Burger King)
-- noon Minutes: banner carousel (General Mills), sponsored shelf (Doritos), Product Ad in a category row (Ben & Jerry's)
-- NowNow: Pet Care department ad (BARK), car rentals takeover (Mercedes-Benz)
+- noon: home carousel with three Flicks between the static banners, the first banner being a Flick (Bose, Gap, Patagonia); Product Ads in Bestsellers (Sony) and Grocery must haves (General Mills); a display card between offer cards (Cross); a Watch and shop video row (Zara, Acer, M&M's); Brand Ad shelf (LEGO); Brand Ads at top of search (Bose, Sony); Product Ad inside results (Nike); category banners (LEGO, Levi's and others); product page media; app-open interstitial (Acer)
+- supermall: featured banners (Nike, Gap), Product Ads in rows (Levi's, Bose), Brand Ad shelf (Sony)
+- noon Food: In the spotlight (Little Caesars, Burger King), featured videos (Burger King, Little Caesars), an ad inside the restaurant list (Ben & Jerry's), restaurant page (Burger King)
+- noon Minutes: banner carousel with three Flicks (General Mills, Doritos, Ben & Jerry's), Product Ads in rows (General Mills, Ben & Jerry's), sponsored shelf (Doritos), display card (M&M's)
+- NowNow: Pet Care (BARK), rent a car ads (Cadillac, Bentley), Lifestyle gifts (Cross), car rentals takeover (Mercedes-Benz)
+
+At most four Flick players are kept running at once (those nearest the screen); others load as they come into view.
 
 ## How it behaves
 
@@ -24,8 +26,8 @@ Open `index.html` in Chrome or Safari, or host the single file anywhere static (
 Concept demo built by Flam for partner conversations. Not affiliated with or endorsed by noon or the brands shown.
 
 - The app content around the ads (vertical tabs, banners, category tiles, product photos, restaurant photos, offers) is cut from a screen recording of the noon UAE app made on 17 Nov 2026 and embedded in the file. Names, prices and offers are as shown that day. Those banners and photos belong to noon and the brands in them.
-- The Flick products (Bose, Sony, LEGO, Nike, Levi's, Acer, General Mills, Doritos, Ben & Jerry's) have no still photo: the Flick is their picture. Their AED prices are illustrative.
-- The Burger King and Little Caesars menus are illustrative. Burger King, Little Caesars and BARK options are shown as "1 of 3" because their option names were not available.
+- The Flick products (Bose, Sony, LEGO, Nike, Levi's, Gap, Patagonia, Zara, Acer, General Mills, Doritos, Ben & Jerry's) have no still photo: the Flick is their picture. Their AED prices are illustrative.
+- The Burger King and Little Caesars menus are illustrative. Burger King, Little Caesars, BARK, M&M's and Cross options are shown as "1 of 3" because their option names were not available.
 
 ## Editing
 
