@@ -73,11 +73,13 @@ v.addEventListener("vertex-error",function(e){var d=e.detail||{};if(d.recovered|
 v.addEventListener("vertex-cta",function(e){var d=e.detail||{};t({type:"cta",url:d.url||""})});
 v.addEventListener("vertex-diff-change",function(e){var d=e.detail||{};var x=d.diff!=null?d.diff:(d.diffId!=null?d.diffId:d.diff_id);t({type:"switch",diff:+x||0,initial:!!d.initial})});}
 /* the host app shows its own button, so the Flick's own CTA is hidden; the option switcher and sound button stay */
-function nocta(){if(KEEP)return;try{var ps=document.getElementsByTagName("vertex-player");for(var i=0;i<ps.length;i++){var r=ps[i].shadowRoot;if(!r)continue;var els=r.querySelectorAll("[data-vertex-trigger]");for(var j=0;j<els.length;j++){var el=els[j];if(el.__fh)continue;
-var v=(el.getAttribute("data-vertex-trigger")||"")+" "+(el.getAttribute("class")||"")+" "+(el.id||"");if(/diff|variant|swap|swatch|picker|scene|option|thumb|sound|mute|audio/i.test(v))continue;
-if(el.hasAttribute("data-vertex-diff")||(el.closest&&el.closest(".vx-picker,[data-vertex-diff]"))||el.querySelector("[data-vertex-diff],.vx-swatch,.vx-picker,[data-vertex-trigger]"))continue;
-var sib=0,p=el.parentNode,ch=p&&p.children?p.children:[];for(var k=0;k<ch.length;k++){if(ch[k].hasAttribute&&ch[k].hasAttribute("data-vertex-trigger"))sib++}if(sib>1)continue;
-el.__fh=1;el.style.setProperty("visibility","hidden","important");el.style.setProperty("pointer-events","none","important")}}}catch(e){}}
+/* The app shows its own button under each Flick, so the Flick's built-in button is hidden. The option switcher and the sound button are never touched:
+   the rule only goes in when the player has a recognisable switcher, and it excludes the switcher and anything holding it. */
+function nocta(){if(KEEP)return;try{var ps=document.getElementsByTagName("vertex-player");for(var i=0;i<ps.length;i++){var r=ps[i].shadowRoot;if(!r||r.querySelector("style[data-nocta]"))continue;
+if(!r.querySelector(".vx-swatch,.vx-picker,[data-vertex-diff]"))continue;
+var st=document.createElement("style");st.setAttribute("data-nocta","");
+st.textContent="[data-vertex-trigger]:not(.vx-swatch):not(.vx-picker):not([data-vertex-diff]):not(.vx-picker *):not(:has(.vx-swatch,.vx-picker,[data-vertex-diff])){visibility:hidden!important;opacity:0!important;pointer-events:none!important}";
+r.appendChild(st)}}catch(e){}}
 new MutationObserver(function(){var v=document.querySelector("vertex-player");if(v){hook(v);nocta()}}).observe(document.documentElement,{childList:true,subtree:true});
 var until=Date.now()+6e4;(function again(){nocta();if(Date.now()<until)setTimeout(again,200)})();
 window.addEventListener("error",function(e){var s=e.target;if(s&&s.tagName==="SCRIPT")t({type:"error",msg:"The Flick tag could not be loaded"})},true);
@@ -282,6 +284,8 @@ function supermallScreen(){
   ${shelf("smshelf","sony","smshelf","#3a2fd0","All-day noise cancelling.<br>Pick your colour.","Delivered in 90 mins")}
   ${FOOT}</div>${nav("home")}</div>`;
 }
+// Featured video tile: the Flick plays in the tile; the strip under it opens it full screen.
+const vidF = (id,k,anchor,meta) => `<div class="vidf" data-anchor="${anchor}"><span class="adtag">Ad</span>${flick(id,k,{cta:"rest"})}<button class="vf2" onclick="openViewer('${k}',{cta:'rest',label:'Order now'})" aria-label="Open ${esc(BRANDS[k].name)} video full screen"><span><b>${esc(BRANDS[k].name)}</b>${meta}</span><i>${I.play}</i></button></div>`;
 const spotI = r => `<button class="spot" onclick="out('${r[1]}')"><div class="si">${pic(r[0],r[1])}</div><b>${r[1]}</b><span>${r[2]} ★ · ${r[3]}</span></button>`;
 const restI = r => `<button class="rest" onclick="out('${r[1].replace("'","")}')"><div class="ri">${pic(r[0],r[1])}</div><div><b>${r[1]}</b><div class="m">${r[2]} ★ (500+) · AED ${r[3]}</div><div class="m" style="color:#2f8f3c">${r[4]}</div><div class="o">${r[5]}</div></div></button>`;
 function foodScreen(){
@@ -291,9 +295,9 @@ function foodScreen(){
     ${adCard("spot2","bk","spot2",{style:"width:262px",cta:"rest",label:"Order now",ccls:"acc",head:"Burger King · Burgers · 20-30 mins"})}${spotI(["r_spot1","ALBAIK - Dubai Mall","4.5","35-45 mins"])}${spotI(["r_spot2","Taqado Mexican Kitchen","4.6","25-35 mins"])}</div>`)}
   ${slice("s_frush","toast('Alerts are not part of this demo')")}
   ${sec("Watch featured videos", `<div class="row">
-    <button class="vid" data-anchor="vid" style="background:linear-gradient(170deg,#3a1206,#d62300)" onclick="openViewer('bk',{cta:'rest',label:'Order now'})" aria-label="Burger King featured video"><span class="adtag">Ad</span><span class="off">Interactive video</span><span class="play">${I.play}</span><b>Burger King</b><span>4.4 ★ · 20-30 mins</span></button>
+    ${vidF("fv1","bk","vid","4.4 ★ · 20-30 mins")}
     ${icard("v_right",145,"toast('Restaurant videos are stills in this demo')")}
-    <button class="vid" data-anchor="vid2" style="background:linear-gradient(170deg,#5a2206,#f26522)" onclick="openViewer('lc',{cta:'rest',label:'Order now'})" aria-label="Little Caesars featured video"><span class="adtag">Ad</span><span class="off">Interactive video</span><span class="play">${I.play}</span><b>Little Caesars</b><span>4.3 ★ · 25-35 mins</span></button>
+    ${vidF("fv2","lc","vid2","4.3 ★ · 25-35 mins")}
     ${icard("v_sweets",145,"toast('Restaurant videos are stills in this demo')")}</div>`)}
   ${sec("Restaurants near you", `<div class="chips" style="padding-top:0"><span class="chip">${I.filter}</span><span class="chip">Sort by ${I.chev}</span><span class="chip">Cuisines ${I.chev}</span><span class="chip">Rating 4.0+</span></div>
     ${RESTS.slice(0,3).map(restI).join("")}<div class="wide" style="margin:12px 14px">${adCard("fdes","bj","fdes",{label:"Add dessert",ccls:"acc",head:"Dessert with your order, from noon Minutes"})}</div>${RESTS.slice(3).map(restI).join("")}`)}
@@ -465,7 +469,7 @@ const GUIDE = [
   ["Swipeable banners", "#e0b400", [["noon home carousel","#/noon","hero"],["supermall featured banners","#/supermall","sm"],["noon Minutes carousel","#/minutes","mban"],["noon Food: In the spotlight","#/food","spot"]]],
   ["Product Ads in rows", "#3866df", [["noon: Bestsellers row","#/noon","best"],["noon: Grocery row","#/noon","gro"],["supermall: brand row","#/supermall","smrow"],["noon Minutes: product row","#/minutes","mrow"],["Cart: add before you check out","#/cart","cart1"]]],
   ["Brand Ad shelves", "#3a2fd0", [["noon home shelf","#/noon","shelf"],["supermall shelf","#/supermall","smshelf"],["noon Minutes shelf","#/minutes","mshelf"]]],
-  ["Shoppable video", "#d4006a", [["noon: Watch and shop row","#/noon","w1"],["Watch and shop page","#/watch","wv-zara"],["noon Food: featured videos","#/food","vid",0,()=>openViewer("bk",{cta:"rest",label:"Order now"})]]],
+  ["Shoppable video", "#d4006a", [["noon: Watch and shop row","#/noon","w1"],["Watch and shop page","#/watch","wv-zara"],["noon Food: featured videos","#/food","vid"]]],
   ["Search", "#2f8f3c", [["Brand Ad at top of search","#/search/earbuds","top"],["Product Ad inside results","#/search/leggings","inline"]]],
   ["Category and product pages", "#c4102b", [["Category page banner","#/cat/toys","catb"],["Product page video","#/p/bose/0","pdp"],["Restaurant page video","#/rest/bk","rest"]]],
   ["Display cards in the feed", "#e2402a", [["noon home: between offers","#/noon","crd1"],["noon Food: inside the restaurant list","#/food","fdes"],["noon Minutes: display card","#/minutes","msw"],["NowNow: department ads","#/nownow","pet"],["NowNow: rent a car","#/nownow","car2"]]],

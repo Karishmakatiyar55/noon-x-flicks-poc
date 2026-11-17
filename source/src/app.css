@@ -417,3 +417,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:ra
   .gitem.cur{background:#eeecff;color:#3a2fd0;font-weight:700}
   .gitem .n{color:#9aa0b0}
 }
+
+.vidf{flex:none;width:226px;border-radius:14px;overflow:hidden;position:relative;background:#1c1e26;color:#fff;scroll-snap-align:start}
+.vidf .adtag{position:absolute;right:8px;top:8px;z-index:6}
+.vf2{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:9px 11px 11px;color:#fff;font-size:11px}
+.vf2 b{display:block;font-size:13.5px}.vf2 i{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:none}
